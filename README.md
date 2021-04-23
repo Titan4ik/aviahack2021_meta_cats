@@ -1,10 +1,12 @@
 # aviahack2021_meta_cats
 При первом запуске создайте venv
-python -m venv .\venv
-и установите неоюходимые библиотеки вызвав .\helper_scripts\install_libs.bat
+pip3 install virtualenv
+virtualenv venv
+и установите неоюходимые библиотеки вызвав
+./venv/bin/python -mpip install -r ./aviahack2021_meta_cats/requirements.txt
 
 Для установки дополнительных библиотек используйте
-.\venv\Scripts\python.exe -mpip install lib_name
+./venv/bin/python -mpip install lib_name
 Затем вызовите
-.\helper_scripts\update_requirements.bat
+./venv/bin/python -mpip freeze > requirements.txt
 Измененный requirements.txt занесите в git
