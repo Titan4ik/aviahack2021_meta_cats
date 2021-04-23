@@ -3,6 +3,7 @@ import json
 import os
 from django.http import HttpResponse, FileResponse
 from model_api.settings import STATICFILES_DIRS
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 def personal(request):
@@ -12,6 +13,7 @@ def personal(request):
 def get_file(request):
     return FileResponse(open(os.path.join(STATICFILES_DIRS[0],'1.jpg'), 'rb'))
 
+@csrf_exempt
 def set_file(request):
     data = request.FILES['input_file'].read()
     with open(os.path.join(STATICFILES_DIRS[0],'1.jpg'), 'wb') as fout:
