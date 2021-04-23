@@ -13,7 +13,13 @@ class Document(models.Model):
 
     def save_file(self, file_data, file_extension):
         file_name = f'{self.doc_id}.{file_extension}'
-        path = os.path.join(STATICFILES_PATH,'documents', f'{self.doc_set_id}',file_name)
+        path = os.path.join(STATICFILES_PATH,'documents', f'{self.doc_set_id}')
+        try:
+            os.mkdir(path)
+        except OSError:
+            ...
+
+        path = os.path.join(path, file_name)
         print(path)
         with open(path, 'wb') as fout:
             fout.write(file_data)
@@ -31,7 +37,12 @@ class DocumentSet(models.Model):
     description = models.CharField(max_length=256)
 
 def save_tags(doc_set_id, tags):
-    path = os.path.join(STATICFILES_PATH,'documents', f'{doc_set_id}','tags.json')
+    path = os.path.join(STATICFILES_PATH,'documents', f'{doc_set_id}')
+    try:
+        os.mkdir(path)
+    except OSError:
+        ...
+    path = os.path.join(path,'tags.json')
     with open(path, 'w') as outfile:
         json.dump(tags, outfile)
 
