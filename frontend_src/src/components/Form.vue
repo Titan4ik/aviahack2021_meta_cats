@@ -1,21 +1,35 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>{{ json }}</p>
-    <form enctype="multipart/form-data" action="http://188.120.226.213:8000/user_part/set_file/" method="post" v-on:submit="submit">
-      <input type="file" name="input_file" accept="image/*">
-      <input type="submit" value="Отправить">
-    </form>
-    <img v-if="img" src="http://188.120.226.213:8000/user_part/get_file/" alt="">
-    <p v-else>sending img...</p>
+  <div class="row">
+    <div class="col-3"></div>
+    <div class="col-6">
+      <h1 class="text-center mb-5">Подписать документы</h1>
+      <p class="mb-3">{{ json }}</p>
+      <form enctype="multipart/form-data" action="http://188.120.226.213:8000/user_part/set_file/" method="post" v-on:submit="submit">
+        <div class="mb-3">
+          <label class="from-label">
+            Какое-то поле
+            <input class="form-control" type="text" name="name">
+          </label>
+        </div>
+        <div class="mb-3">
+          <label class="from-label">
+            Поле с картинкой
+            <input type="file" name="input_file" accept="image/*">
+          </label>
+        </div>
+        <button type="submit" class="btn btn-primary">Отправить</button>
+      </form>
+      <img class="mt-3" v-if="img" src="http://188.120.226.213:8000/user_part/get_file/" alt="">
+      <p v-else>sending img...</p>
+    </div>
+    <div class="col-3"></div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'HelloWorld',
+  name: 'Form',
   props: {
-    msg: String
   },
 
   data() {
@@ -61,6 +75,9 @@ export default {
           this.img = true
         }
       })
+      .catch(error => {
+        this.json = 'response error: ' + error
+      })
     }
   }
 }
@@ -82,4 +99,5 @@ li {
 a {
   color: #42b983;
 }
+
 </style>
