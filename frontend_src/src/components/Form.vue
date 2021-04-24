@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import api from '@/api/'
+
 export default {
   name: 'Form',
   props: {
@@ -45,7 +47,7 @@ export default {
 
   methods: {
     getJson() {
-      fetch('http://188.120.226.213:8000/user_part/personal/')
+      api.personal()
       .then(async response => {
         if (response.ok) {
           this.json = await response.text()
@@ -65,11 +67,7 @@ export default {
 
       this.img = false
 
-      fetch('http://188.120.226.213:8000/user_part/set_file/', {
-        method: 'POST',
-        body: formData,
-        credentials: 'include'
-      })
+      api.setFile(formData)
       .then(response => {
         if (response.ok) {
           this.img = true
