@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+from django.db.backends.mysql.base import DatabaseWrapper
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -40,6 +42,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'user_part',
     'documents',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -80,11 +83,19 @@ WSGI_APPLICATION = 'model_api.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
+DJANGO_DB = {
+    'db': 'hackathon',
+    'user': 'hackathon',
+    'host': '188.120.226.213',
+    'pass': 'hack1234',
+}
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': DJANGO_DB['db'],
+        'USER': DJANGO_DB['user'],
+        'PASSWORD': DJANGO_DB['pass'],
+        'HOST': DJANGO_DB['host'],
     }
 }
 

@@ -5,6 +5,8 @@ from django.http import HttpResponse, FileResponse
 from model_api.settings import STATICFILES_DIRS
 from django.views.decorators.csrf import csrf_exempt
 from documents.models import load_tags, Document, DocumentSet, save_tags
+from model_api.auth import login_required
+from users.models import Producer
 # Create your views here.
 
 def get_docs(request):
@@ -35,7 +37,8 @@ def get_doc(request):
     doc = Document.object.filter(doc_id=doc_id, doc_set_id=doc_set_id)
     return FileResponse(doc.open_file())
     
-def fill_doc(request):
+@login_required(strong_auth=False)
+def fill_doc(request, add_info: dict):
     '''
         вернет документ, и если указан flg_feel true, то заполнит его
     '''
@@ -51,17 +54,20 @@ def get_tags(request):
     response_data = load_tags(request.GET['doc_set_id'])
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-def send_docs(request):
+@login_required()
+def send_docs(request, add_info: dict):
     '''
         
     '''
     response_data = ['не реализован']
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-def add_docs(request):
+@login_required(find_producer_id=True)
+def add_docs(request, add_info: dict):
     file_count = request.GET['file_count']
     description = request.GET['description']
-    doc_set = DocumentSet(description=description)
+    producer_id = Producer.object.filter(user_id=request.GET['user_id'])
+    doc_set = DocumentSet(description=description,producer_id=producer_id)
     doc_set.save()
     doc_set_id = doc_set.doc_set_id
 

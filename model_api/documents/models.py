@@ -34,6 +34,7 @@ class Document(models.Model):
 
 class DocumentSet(models.Model):
     doc_set_id = models.AutoField
+    producer_id = models.IntegerField(default=None)
     description = models.CharField(max_length=256)
 
 def save_tags(doc_set_id, tags):

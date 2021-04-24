@@ -5,8 +5,10 @@ from django.http import HttpResponse, FileResponse
 from model_api.settings import STATICFILES_DIRS
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
+from model_api.auth import login_required
 
-def personal(request):
+@login_required()
+def personal(request, add_info: dict):
     response_data = {'msg': 'HELLO VLAD', 'status': 'ok'}
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
