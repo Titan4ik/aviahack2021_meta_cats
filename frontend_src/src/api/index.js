@@ -55,6 +55,14 @@ const api = {
       method: 'GET',
       credentials: 'include'
     })
+  },
+
+  fillDocs(docSetId, formData) {
+    return fetch(`http://188.120.226.213:8000/documents/fill_docs/?doc_set_id=${docSetId}`, {
+      method: 'POST',
+      body: formData,
+      credentials: 'include'
+    })
   }
 }
 

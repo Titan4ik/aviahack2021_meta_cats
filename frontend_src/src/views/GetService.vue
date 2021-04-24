@@ -6,22 +6,22 @@
         <p>Эти данные нужны для заполнения следующих документов:</p>
         <ul>
             <li v-for="doc in docs" :key="doc.doc_id">
-                <a :href="'http://188.120.226.213:8000/static' + doc.path" data-bs-toggle="modal" data-bs-target="#exampleModal">{{ doc.doc_name }}</a>
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">{{ doc.doc_name }}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <a :href="'http://188.120.226.213:8000/static' + doc.path" data-bs-toggle="modal" :data-bs-target="`#empty${doc.doc_id}`">{{ doc.doc_name }}</a>
+                <div class="modal fade" :id="`empty${doc.doc_id}`" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">{{ doc.doc_name }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <object :data="'http://188.120.226.213:8000/static' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720"></object>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        </div>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                        <object :data="'http://188.120.226.213:8000/static' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720"></object>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                    </div>
-                    </div>
-                </div>
                 </div>
             </li>
         </ul>
@@ -34,40 +34,35 @@
                 <input type="text" class="form-control" :name="tag"  required>
             </label>
         </div>
-        <button type="submit" class="btn btn-primary btn-block">Отправить</button>
+        <button v-if="isTagsSending" class="btn btn-primary btn-block" disabled>Данные отправляются...</button>
+        <button v-else type="submit" class="btn btn-primary btn-block">Отправить</button>
     </form>
     <div :hidden="!isTagsSubmited">
         <h2>Предварительный вид документов</h2>
-        <div id="accordion" role="tablist" aria-multiselectable="true">
-            <div class="card">
-                <div class="card-header" role="tab" id="headingOne">
-                <h5 class="mb-0">
-                    <a data-toggle="collapse" data-parent="#accordion"  href="#" aria-expanded="true" aria-controls="collapseOne">
-                    Документ #1
-                    </a>
-                </h5>
-                </div>
-                <div id="collapseOne" class="collapse " role="tabpanel" aria-labelledby="headingOne">
-                    <div class="card-block">
-                        Содержимое документа 1
+        <div v-if="filledDocs">
+        <p>Вы можете проверить вид документов:</p>
+        <ul>
+            <li v-for="doc in filledDocs" :key="doc.doc_id">
+                <a :href="'http://188.120.226.213:8000/static' + doc.path" data-bs-toggle="modal" :data-bs-target="`#filled${doc.doc_id}`">{{ doc.doc_name }}</a>
+                <div class="modal fade" :id="`filled${doc.doc_id}`" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ doc.doc_name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <object :data="'http://188.120.226.213:8000/static/' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720"></object>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    </div>
                     </div>
                 </div>
-            </div>
-            <div class="card">
-                <div class="card-header" role="tab" id="headingOne">
-                <h5 class="mb-0">
-                    <a data-toggle="collapse" data-parent="#accordion"  href="#" aria-expanded="true" aria-controls="collapseOne">
-                    Документ #1
-                    </a>
-                </h5>
                 </div>
-                <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
-                    <div class="card-block">
-                        Содержимое документа 1
-                    </div>
-                </div>
-            </div>
-        </div>
+            </li>
+        </ul>
+    </div>
         <h2>Подписать все необходимые документы</h2>
         <div class="signature_wrapper">
             <canvas id="signature-pad" class="signature-pad" width=300 height=100></canvas>
@@ -89,7 +84,9 @@ export default {
       signaturePad: {},
       tags: false,
       docs: false,
-      isTagsSubmited: false
+      filledDocs: false,
+      isTagsSubmited: false,
+      isTagsSending: false
     }
   },
   name: 'GetService',
@@ -123,7 +120,20 @@ export default {
         },
         submitTags(event) {
             event.preventDefault()
-            this.isTagsSubmited = true
+            const formData = new FormData(event.target)
+
+            this.isTagsSubmited = false
+            this.isTagsSending = true
+            api.fillDocs(13, formData)
+            .then(async response => {
+                if (response.ok) {
+                    this.filledDocs = await response.json()
+                    this.isTagsSubmited = true
+                }
+            })
+            .finally(() => {
+                this.isTagsSending = false
+            })
         },
         clearSign: function () {
             this.signaturePad.clear()
