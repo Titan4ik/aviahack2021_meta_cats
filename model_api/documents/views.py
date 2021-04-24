@@ -100,3 +100,20 @@ def add_docs(request, add_info: dict):
     response_data = {'doc_set_id': doc_set_id}
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
+def get_doc_sets(request):
+    prods = Producer.objects.all()
+    response_data = []
+    for prod in prods:
+        res = {
+            'producer_name': prod.company_name,
+            'offers': [],
+        }
+        docs = DocumentSet.objects.filter(producer_id=prod.id)
+        for doc in docs:
+            res['offers'].append({
+                'description': doc.description,
+                'id': doc.id
+            })
+        response_data.append(res)
+
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
