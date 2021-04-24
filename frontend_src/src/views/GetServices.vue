@@ -4,7 +4,7 @@
     <div v-if="docSets">
       <div v-for="docSet in docSets" :key="docSet.producer_name">
         <h2>{{ docSet.producer_name }}</h2>
-        <ul v-if="docSet.offers" class="list-group list-group-flush">
+        <ul v-if="docSet.offers" class="list-group">
           <li class="list-group-item">
             <a v-for="offer in docSet.offers" :key="offer.offer_id" :href="`get-service/${offer.id}`">{{ offer.description }}</a>
           </li>
