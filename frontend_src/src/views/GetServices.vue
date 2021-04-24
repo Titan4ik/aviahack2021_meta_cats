@@ -6,7 +6,7 @@
         <h2>{{ docSet.producer_name }}</h2>
         <ul v-if="docSet.offers" class="list-group">
           <li v-for="offer in docSet.offers" :key="offer.offer_id" class="list-group-item">
-            <a :href="`get-service/${offer.id}`">{{ offer.description }}</a>
+            <a :href="`get-service/${offer.id}`">{{ offer.name }}</a>
           </li>
         </ul>
         <p v-else>У этого постовщика пока нет услуг</p>

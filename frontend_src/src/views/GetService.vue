@@ -36,7 +36,7 @@
         <div v-for="tag in tags" :key="tag" class="form-group">
           <label class="w-100">
             {{ tag }}
-            <input type="text" class="form-control" :name="tag" v-model="filled[tag]"  required>
+            <input type="text" class="form-control" :name="tag" :value="$route.query[tag] || filled[tag]"  required>
           </label>
         </div>
         <button v-if="isTagsSending" class="btn btn-primary btn-block" disabled>Данные отправляются...</button>

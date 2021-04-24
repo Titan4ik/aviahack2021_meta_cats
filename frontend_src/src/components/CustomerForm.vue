@@ -6,6 +6,12 @@
       <input type="hidden" name="refresh_token" :value="refresh_token">
       <div class="mb-3">
         <label class="from-label w-100">
+          Название услуги
+          <input type="test" class="form-control" name="name">
+        </label>
+      </div>
+      <div class="mb-3">
+        <label class="from-label w-100">
           Описание услуги
           <textarea class="form-control" rows="3" name="description"> </textarea>
         </label>
