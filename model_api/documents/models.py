@@ -11,23 +11,28 @@ class Document(models.Model):
     doc_set_id = models.IntegerField()
     doc_name = models.CharField(max_length=128)
 
-    def save_file(self, file_data, file_extension):
-        file_name = f'{self.doc_id}.{file_extension}'
+    def get_name(self):
+        filename, file_extension = os.path.splitext(self.doc_name)
+        return filename
+
+    def get_path(self):
+        path = os.path.join(STATICFILES_PATH,'documents', f'{self.doc_set_id}',self.doc_name)
+        return path
+
+    def save_file(self, file_data):
         path = os.path.join(STATICFILES_PATH,'documents', f'{self.doc_set_id}')
         try:
             os.mkdir(path)
         except OSError:
             ...
 
-        path = os.path.join(path, file_name)
+        path = os.path.join(path, self.doc_name)
         print(path)
         with open(path, 'wb') as fout:
             fout.write(file_data)
 
     def open_file(self):
-        filename, file_extension = os.path.splitext('/path/to/somefile.ext')
-        file_name = f'{self.doc_id}.{file_extension}'
-        path = os.path.join(STATICFILES_PATH,'documents', f'{self.doc_set_id}',file_name)
+        path = os.path.join(STATICFILES_PATH,'documents', f'{self.doc_set_id}',self.doc_name)
         return open(path, 'rb')
 
 

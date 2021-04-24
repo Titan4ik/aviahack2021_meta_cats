@@ -54,13 +54,7 @@ def get_tags(request):
     response_data = load_tags(request.GET['doc_set_id'])
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-@login_required()
-def send_docs(request, add_info: dict):
-    '''
-        
-    '''
-    response_data = ['не реализован']
-    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
 
 @login_required(find_producer_id=True)
 def add_docs(request, add_info: dict):
