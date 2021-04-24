@@ -6,7 +6,23 @@
         <p>Эти данные нужны для заполнения следующих документов:</p>
         <ul>
             <li v-for="doc in docs" :key="doc.doc_id">
-                {{ doc.doc_name }}
+                <a :href="'http://188.120.226.213:8000/static' + doc.path" data-bs-toggle="modal" data-bs-target="#exampleModal">{{ doc.doc_name }}</a>
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">{{ doc.doc_name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <object :data="'http://188.120.226.213:8000/static' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720"></object>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    </div>
+                    </div>
+                </div>
+                </div>
             </li>
         </ul>
     </div>
@@ -19,7 +35,6 @@
             </label>
         </div>
         <button type="submit" class="btn btn-primary btn-block">Отправить</button>
-        
     </form>
     <div :hidden="!isTagsSubmited">
         <h2>Предварительный вид документов</h2>
@@ -91,7 +106,7 @@ export default {
     methods:
     {
         getTags() {
-            api.getTags(11)
+            api.getTags(13)
             .then(async response => {
                 if (response.ok) {
                     this.tags = await response.json()
@@ -99,7 +114,7 @@ export default {
             })
         },
         getDocs() {
-            api.getDocs(11)
+            api.getDocs(13)
             .then(async response => {
                 if (response.ok) {
                     this.docs = await response.json()
