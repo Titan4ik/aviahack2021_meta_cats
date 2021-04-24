@@ -17,17 +17,18 @@ class UserInfo(models.Model):
     date_of_birth = models.DateField()
 
     def get_param(self, param_name):
-        if param_name == 'Фамилия':
+        param_name = param_name.lower()
+        if param_name == 'фамилия':
             return self.first_name
-        if param_name == 'Имя':
+        if param_name == 'имя':
             return self.second_name
-        if param_name == 'Отчество':
+        if param_name == 'отчество':
             return self.third_name
-        if param_name == 'Серия паспорта':
+        if param_name == 'серия паспорта':
             return self.passport_series
-        if param_name == 'Номер паспорта':
+        if param_name == 'номер паспорта':
             return self.passport_number
-        if param_name == 'Дата рождения':
+        if param_name == 'дата рождения':
             return self.date_of_birth
         return None
 
