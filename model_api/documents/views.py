@@ -22,27 +22,26 @@ def get_docs(request):
     '''
     doc_set_id = request.GET['doc_set_id']
     docs = Document.objects.filter(doc_set_id=doc_set_id)
-    response_data = [
-        {
-            'doc_id': doc.id,
-            'doc_name': doc.doc_name
-        }
-        for doc in docs
-    ]
+    response_data = []
+    for doc in docs:
+        filename, file_extension = os.path.splitext(doc.get_name())
+        out_name = f'{filename}.pdf'
+        main.word2pdf(doc.get_name(), out_name)
+        response_data.append(
+            {
+                'doc_id': doc.id,
+                'doc_name': doc.doc_name,
+                'path': out_name,
+            }
+        )
+    
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 def get_doc(request):
-    doc_id = request.GET['doc_id']
-    doc_set_id = request.GET['doc_set_id']
-    doc = Document.objects.filter(id=doc_id, doc_set_id=doc_set_id)[0]
-
-    filename, file_extension = os.path.splitext(doc.get_name())
-    out_name = f'{filename}.pdf'
-    main.word2pdf(doc.get_name(), out_name)
-    return HttpResponse(json.dumps([out_name]), content_type="application/json")
+    ...
     
 @login_required(strong_auth=False)
-def fill_doc(request, add_info: dict):
+def fill_docs(request, add_info: dict):
     doc_id = request.GET['doc_id']
     doc_set_id = request.GET['doc_set_id']
     doc = Document.objects.filter(id=id, doc_set_id=doc_set_id)[0]
