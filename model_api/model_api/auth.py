@@ -53,8 +53,8 @@ def login_required(*,strong_auth=True, find_producer_id=False):
         def wrapper(request):
             add_param = {}
             try:
-                access_token = request.COOKIES['access_token']
-                refresh_token = request.COOKIES['refresh_token']
+                access_token = request.POST['access_token']
+                refresh_token = request.POST['refresh_token']
                 user_id = user_logins[(access_token, refresh_token)]
                 add_param['user_id'] = user_id
             except KeyError:
