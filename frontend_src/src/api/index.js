@@ -3,11 +3,11 @@ const api = {
     return fetch('http://188.120.226.213:8000/user_part/personal/', {
       method: "POST",
       headers: {
-      'Content-Type': 'application/json'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-          access_token: localStorage.getItem('access_token'),
-          refresh_token: localStorage.getItem('refresh_token'),
+        access_token: localStorage.getItem('access_token'),
+        refresh_token: localStorage.getItem('refresh_token'),
       })
     })
   },
@@ -41,7 +41,7 @@ const api = {
       method: 'POST',
       credentials: 'include',
       headers: {
-      'Content-Type': 'application/json'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
           access_token: localStorage.getItem('access_token'),
@@ -64,7 +64,16 @@ const api = {
     })
   },
 
+  getDocSetInfo(docSetId) {
+    return fetch(`http://188.120.226.213:8000/documents/get_doc_set_info/?doc_set_id=${docSetId}`, {
+      method: 'GET',
+      credentials: 'include'
+    })
+  },
+
   fillDocs(docSetId, formData) {
+    formData.set('access_token', localStorage.getItem('access_token'))
+    formData.set('refresh_token', localStorage.getItem('refresh_token'))
     return fetch(`http://188.120.226.213:8000/documents/fill_docs/?doc_set_id=${docSetId}`, {
       method: 'POST',
       body: formData,
@@ -86,6 +95,34 @@ const api = {
       credentials: 'include'
     })
   },
+
+  async isLogin() {
+    return (await fetch('http://188.120.226.213:8000/users/test_sign_user/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        access_token: localStorage.getItem('access_token'),
+        refresh_token: localStorage.getItem('refresh_token'),
+      })
+    })).ok
+  },
+
+  logout() {
+    fetch('http://188.120.226.213:8000/users/logout/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        access_token: localStorage.getItem('access_token'),
+        refresh_token: localStorage.getItem('refresh_token'),
+      })
+    })
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('refresh_token')
+  }
 }
 
 export default api

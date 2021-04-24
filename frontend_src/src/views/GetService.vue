@@ -1,7 +1,9 @@
 <template>
 <div id="get-service">
-  <h1>Некоторая услуга №{{ docSetId }}</h1>
-  <p>Описание услуги</p>
+  <div v-if="docSetInfo">
+    <h1>{{ docSetInfo.name }}</h1>
+    <p>{{ docSetInfo.description }}</p>
+  </div>
   <div v-if="!isTagsSubmited">
     <div v-if="docs">
       <p>Ваши данные нужны для заполнения следующих документов:</p>
@@ -34,7 +36,7 @@
         <div v-for="tag in tags" :key="tag" class="form-group">
           <label class="w-100">
             {{ tag }}
-            <input type="text" class="form-control" :name="tag" :value="filled[tag]"  required>
+            <input type="text" class="form-control" :name="tag" v-model="filled[tag]"  required>
           </label>
         </div>
         <button v-if="isTagsSending" class="btn btn-primary btn-block" disabled>Данные отправляются...</button>
@@ -95,6 +97,7 @@ export default {
       signaturePad: {},
       tags: false,
       filled: {},
+      docSetInfo: false,
       docs: false,
       filledDocs: false,
       isTagsSubmited: false,
@@ -114,11 +117,22 @@ export default {
       penColor: 'rgb(0, 0, 0)'
     })
     
+    this.getDocSetInfo()
     this.getTags()
     this.getDocs()
   },
   methods:
   {
+    getDocSetInfo() {
+      api.getDocSetInfo(this.docSetId)
+      .then(async response => {
+        if (response.ok) {
+          this.docSetInfo = await response.json()
+        }
+      })
+      .catch(() => this.docSetInfo = false)
+    },
+
     getTags() {
       api.getTags(this.docSetId)
       .then(async response => {
