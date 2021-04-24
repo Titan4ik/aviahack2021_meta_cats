@@ -24,14 +24,14 @@ def get_docs(request):
     docs = Document.objects.filter(doc_set_id=doc_set_id)
     response_data = []
     for doc in docs:
-        filename, file_extension = os.path.splitext(doc.get_name())
+        filename, file_extension = os.path.splitext(doc.get_path())
+        doc_name, _ = os.path.splitext(doc.doc_name)
         out_name = f'{filename}.pdf'
-        main.word2pdf(doc.get_name(), out_name)
         response_data.append(
             {
                 'doc_id': doc.id,
-                'doc_name': doc.doc_name,
-                'path': out_name,
+                'doc_name': f'{doc_name}.pdf',
+                'path': out_name.split('/static')[1],
             }
         )
     
@@ -42,17 +42,28 @@ def get_doc(request):
     
 @login_required(strong_auth=False)
 def fill_docs(request, add_info: dict):
-    doc_id = request.GET['doc_id']
     doc_set_id = request.GET['doc_set_id']
-    doc = Document.objects.filter(id=id, doc_set_id=doc_set_id)[0]
+    docs = Document.objects.filter(doc_set_id=doc_set_id)
 
     tags = json.loads(request.body)
     ts = time.time()
-    in_name = os.join(STATICFILES_DIRS[0],'tmp_doc',f'{ts}.docx')
-    word_data = main.fill_doc(doc, in_name, tags)
-    out_name = os.join(STATICFILES_DIRS[0],'tmp_doc',f'{ts}.pdf')
-    main.word2pdf(in_name, out_name)
-    return HttpResponse(json.dumps([out_name]), content_type="application/json")
+
+    response_data = []
+    for i, doc in enumerate(docs):
+        in_name = os.path.join(STATICFILES_DIRS[0],'tmp_doc',f'{ts}_{request.COOKIES["sessionid"]}_{i}.docx')
+        word_data = main.fill_doc(doc, in_name, tags)
+        out_name = os.path.join(STATICFILES_DIRS[0],'tmp_doc')
+        main.word2pdf(in_name, out_name)
+        doc_name, _ = os.path.splitext(doc.doc_name)
+        response_data.append(
+            {
+                'doc_id': doc.id,
+                'doc_name': f'{doc_name}.pdf',
+                'path': os.path.join('', 'tmp_doc',f'{ts}_{request.COOKIES["sessionid"]}_{i}.pdf')
+            }
+        )
+    
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 def get_tags(request):
     response_data = load_tags(request.GET['doc_set_id'])
@@ -75,7 +86,11 @@ def add_docs(request, add_info: dict):
         doc.save()
         filename, file_extension = os.path.splitext(doc_name)
         doc.save_file(file_data.read())
-    
+
+        filename, file_extension = os.path.splitext(doc.get_path())
+        out_name = f'{filename}.pdf'
+        main.word2pdf(doc.get_path(), os.path.dirname(out_name))
+
         tags_in_docx = DocxTemplate(doc.get_path()).get_undeclared_template_variables()
         tags += tags_in_docx
     save_tags(doc_set_id, list(set(tags)))
