@@ -49,12 +49,12 @@ def save_tags(doc_set_id, tags):
     except OSError:
         ...
     path = os.path.join(path,'tags.json')
-    with open(path, 'w') as outfile:
+    with open(path, 'w', encoding='utf-8') as outfile:
         json.dump(tags, outfile)
 
 def load_tags(doc_set_id):
     path = os.path.join(STATICFILES_PATH,'documents', f'{doc_set_id}','tags.json')
-    with open(path, 'r') as outfile:
+    with open(path, 'r', encoding='utf-8') as outfile:
         tags = json.load(outfile)
     return tags
 

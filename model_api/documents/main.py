@@ -20,9 +20,5 @@ def fill_doc(document: Document, out_name, tags: dict, electronic_signature: str
 
 
 def word2pdf(in_name, out_name):
-    ts = time.time()
-    path = ''
-    with open(path, 'wb') as f:
-        f.write(input_docx)
     p = Popen(['librepffice', '--convert-to', 'pdf', '--outdir',out_name, in_name])
     p.communicate()
