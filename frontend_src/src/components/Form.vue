@@ -1,7 +1,5 @@
 <template>
-  <div class="row">
-    <div class="col-3"></div>
-    <div class="col-6">
+    <div>
       <h1 class="text-center mb-5">Подписать документы</h1>
       <p class="mb-3">{{ json }}</p>
       <form enctype="multipart/form-data" action="http://188.120.226.213:8000/user_part/set_file/" method="post" v-on:submit="submit">
@@ -22,8 +20,6 @@
       <img class="mt-3" v-if="img" src="http://188.120.226.213:8000/user_part/get_file/" alt="">
       <p v-else>sending img...</p>
     </div>
-    <div class="col-3"></div>
-  </div>
 </template>
 
 <script>
