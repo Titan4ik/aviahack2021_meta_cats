@@ -38,8 +38,15 @@ const api = {
 
   getTags(docSetId) {
     return fetch('http://188.120.226.213:8000/documents/get_tags/?doc_set_id=' + docSetId, {
-      method: 'GET',
-      credentials: 'include'
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+      'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+          access_token: localStorage.getItem('access_token'),
+          refresh_token: localStorage.getItem('refresh_token'),
+      })
     })
   },
 

@@ -22,10 +22,11 @@ const routes = [{
           import ('../views/Login.vue')
     },
     {
-        path: '/get-service',
+        path: '/get-service/:docSetId',
         name: 'GetService',
         component: () =>
-            import ('../views/GetService.vue')
+            import ('../views/GetService.vue'),
+        props: true
     },
     {
         path: '/get-services',
