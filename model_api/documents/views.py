@@ -60,6 +60,7 @@ def add_docs(request, add_info: dict):
     doc_set.save()
     doc_set_id = doc_set.id
 
+    tags = []
     for f in request.FILES.getlist('files'):
         file_data = f
         doc_name=file_data.name
@@ -67,8 +68,10 @@ def add_docs(request, add_info: dict):
         doc.save()
         filename, file_extension = os.path.splitext(doc_name)
         doc.save_file(file_data.read())
-    tags = []
-    save_tags(doc_set_id, tags)
+    
+        tags_in_docx = DocxTemplate(doc.get_path()).get_undeclared_template_variables()
+        tags += tags_in_docx
+    save_tags(doc_set_id, list(set(tags)))
 
     response_data = {'doc_set_id': doc_set_id}
     return HttpResponse(json.dumps(response_data), content_type="application/json")
