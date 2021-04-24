@@ -26,7 +26,7 @@ def _generate_refresh_token(user):
     return refresh_token
 
 def _generate_tokens(user):
-    access_token = generate_access_token(user)
+    access_token = _generate_access_token(user)
     refresh_token = _generate_refresh_token(user)
     user_logins[(access_token, refresh_token)] = user.id
     return (access_token, refresh_token)
