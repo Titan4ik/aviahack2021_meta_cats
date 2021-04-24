@@ -39,6 +39,7 @@ class Document(models.Model):
 
 class DocumentSet(models.Model):
     id = models.AutoField
+    name = models.CharField(max_length=256)
     producer_id = models.IntegerField(default=None)
     description = models.CharField(max_length=256)
 

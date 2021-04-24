@@ -21,11 +21,13 @@ def sign_up(request):
     else:
         return HttpResponse(json.dumps({'status': 'ok'}), content_type="application/json")
 
+@auth.login_required()
 def logout(request):
     json_data = json.loads(request.body)
     access_token = json_data['access_token']
     refresh_token = json_data['refresh_token']
     auth.logout(access_token, refresh_token)
+    return HttpResponse(json.dumps({'status': 'ok'}), content_type="application/json")
 
 @auth.login_required()
 def test_sign_user(request, _):

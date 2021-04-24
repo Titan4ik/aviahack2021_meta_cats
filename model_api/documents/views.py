@@ -134,9 +134,25 @@ def get_doc_sets(request):
         docs = DocumentSet.objects.filter(producer_id=prod.id)
         for doc in docs:
             res['offers'].append({
+                'name': doc.name,
                 'description': doc.description,
                 'id': doc.id
             })
         response_data.append(res)
 
     return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+def get_doc_set_info(request):
+    doc = DocumentSet.objects.filter(id=request.GET["doc_set_id"])[0]
+    producer = Producer.objects.filter(id=doc.producer_id)[0]
+    return HttpResponse(
+        json.dumps(
+            {
+                "name": doc.name,
+                "description": doc.description,
+                "company_name": producer.company_name,
+            }
+        ),
+        content_type="application/json",
+    )
+    
