@@ -5,17 +5,15 @@ from django.http import HttpResponse
 
 # Create your views here.
 def sign_in(request):
-    json_data = json.loads(request.body)
-    username = json_data['username']
-    password = json_data['password']
+    username = request.POST['username']
+    password = request.POST['password']
     tokens = auth.sign_in(request, username, password)
     return HttpResponse(json.dumps(tokens), content_type="application/json")
 
 def sign_up(request):
-    json_data = json.loads(request.body)
-    username = json_data['username']
-    password = json_data['password']
-    email = json_data['email']
+    username = request.POST['username']
+    password = request.POST['password']
+    email = request.POST['email']
     try:
         auth.sign_up(username, password, email)
     except Exception as e:
