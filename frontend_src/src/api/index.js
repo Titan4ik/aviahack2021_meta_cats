@@ -34,6 +34,27 @@ const api = {
       body: formData,
       credentials: 'include'
     })
+  },
+
+  getTags(docSetId) {
+    return fetch('http://188.120.226.213:8000/documents/get_tags/?doc_set_id=' + docSetId, {
+      method: 'GET',
+      credentials: 'include'
+    })
+  },
+
+  getDocs(docSetId) {
+    return fetch('http://188.120.226.213:8000/documents/get_docs/?doc_set_id=' + docSetId, {
+      method: 'GET',
+      credentials: 'include'
+    })
+  },
+
+  getDoc(docSetId, docId) {
+    return fetch(`http://188.120.226.213:8000/documents/get_doc/?doc_set_id=${docSetId}&doc_id=${docId}`, {
+      method: 'GET',
+      credentials: 'include'
+    })
   }
 }
 
