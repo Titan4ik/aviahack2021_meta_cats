@@ -30,3 +30,8 @@ class UserInfo(models.Model):
         if param_name == 'Дата рождения':
             return self.date_of_birth
         return None
+
+class AuthTokens(models.Model):
+    user_id = models.IntegerField()
+    access_token = models.CharField(max_length=256)
+    refresh_token = models.CharField(max_length=256)
