@@ -26,6 +26,14 @@ const api = {
       body: formData,
       credentials: 'include'
     })
+  },
+
+  addDocs(formData) {
+    return fetch('http://188.120.226.213:8000/documents/add_docs/', {
+      method: 'POST',
+      body: formData,
+      credentials: 'include'
+    })
   }
 }
 

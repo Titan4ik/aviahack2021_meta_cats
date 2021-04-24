@@ -3,24 +3,25 @@
     <div class="col-3"></div>
     <div class="col-6">
       <h1 class="text-center mb-5">Создать услугу</h1>
-      <p class="mb-3">{{ json }}</p>
-      <form enctype="multipart/form-data" action="http://188.120.226.213:8000/user_part/set_file/" method="post" v-on:submit="submit">
+      <form v-on:submit="submit">
+        <input type="hidden" name="access_token" :value="access_token">
+        <input type="hidden" name="refresh_token" :value="refresh_token">
         <div class="mb-3">
-          <label class="from-label">
-            Какое-то поле
-            <input class="form-control" type="text" name="name">
+          <label class="from-label w-100">
+            Описание услуги
+            <textarea class="form-control" rows="3" name="description"> </textarea>
           </label>
         </div>
         <div class="mb-3">
           <label class="from-label">
-            Поле с картинкой
-            <input type="file" name="input_file" accept="image/*">
+            Документы
+            <input class="form-control" type="file" name="files" multiple accept=".doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
           </label>
         </div>
-        <button type="submit" class="btn btn-primary">Отправить</button>
+        <p v-if="isSending">sending...</p>
+        <button v-else type="submit" class="btn btn-primary">Отправить</button>
+        <p v-if="error">{{ error }}</p>
       </form>
-      <img class="mt-3" v-if="img" src="http://188.120.226.213:8000/user_part/get_file/" alt="">
-      <p v-else>sending img...</p>
     </div>
     <div class="col-3"></div>
   </div>
@@ -36,45 +37,36 @@ export default {
 
   data() {
     return {
-      json: 'loading',
-      img: true
+      isSending: false,
+      error: false,
+      access_token: localStorage.getItem('access_token'),
+      refresh_token: localStorage.getItem('refresh_token')
     }
   },
 
   mounted() {
-    this.getJson()
   },
 
   methods: {
-    getJson() {
-      api.personal()
-      .then(async response => {
-        if (response.ok) {
-          this.json = await response.text()
-        } else {
-          this.json = 'response error ' + response.status
-        }
-      })
-      .catch(error => {
-        this.json = 'response error: ' + error
-      })
-    },
-
     submit(event) {
       event.preventDefault()
 
       const formData = new FormData(event.target)
 
-      this.img = false
+      this.isSending = true
 
-      api.setFile(formData)
+      api.addDocs(formData)
       .then(response => {
         if (response.ok) {
-          this.img = true
+          this.error = 'Документы отправлены'
+        } else {
+          this.error = 'response error: ' + response.status
         }
+        this.isSending = false;
       })
       .catch(error => {
-        this.json = 'response error: ' + error
+        this.error = 'response error: ' + error
+        this.isSending = false;
       })
     }
   }
