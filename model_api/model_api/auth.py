@@ -63,6 +63,8 @@ def login_required(*,strong_auth=True, find_producer_id=False):
                     add_param['user_id'] = None
             if find_producer_id:
                 producer_id = Producer.object.filter(user_id=request.GET['user_id'])
+                if not producer_id:
+                    raise Exception('Этот метод доступен только заказчикам')
                 add_param['producer_id'] = producer_id.id
 
             return_value = func(request, add_param)
