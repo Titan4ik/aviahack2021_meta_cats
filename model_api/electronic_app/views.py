@@ -2,22 +2,31 @@ from django.shortcuts import render
 from electronic_app.models import ElectronicApplication, ElectronicApplicationDocument
 from django.http import HttpResponse, FileResponse
 from electronic_app import main
-from documents.models import DocumentSet
+from documents.models import DocumentSet, Document
 import json
 from model_api.auth import login_required
 from django.contrib.auth.models import User
+from base64 import decodestring
+from model_api.settings import STATICFILES_DIRS
+from users.models import Producer
 
 
 @login_required(strong_auth=False)
 def create(request, add_info: dict):
     doc_set_id = request.GET["doc_set_id"]
-    el_sign = request.FILES["el_sign"]
+    imagestr = request.FILES["el_sign"]
 
     docs = Document.objects.filter(doc_set_id=doc_set_id)
 
     tags = dict(request.POST.items())
     ea = ElectronicApplication(doc_set_id=doc_set_id, consumer_id=add_info["user_id"])
     ea.save()
+
+    image_path = os.path.join(
+        STATICFILES_DIRS[0], "electronic_application", f"{ea.id}", "подпись.png"
+    )
+    with open(image_path, "wb") as f:
+        f.write(decodestring(imagestr))
 
     response_data = []
 
@@ -27,7 +36,7 @@ def create(request, add_info: dict):
 
         in_name = ead.get_path()
 
-        word_data = main.fill_doc(doc, in_name, tags, el_sign)
+        word_data = main.fill_doc(doc, in_name, tags, image_path)
         out_name = os.path.dirname(in_name)
         main.word2pdf(in_name, out_name)
         doc_name, _ = os.path.splitext(in_name)
@@ -38,14 +47,24 @@ def create(request, add_info: dict):
                 "path": f"{doc_name}.pdf",
             }
         )
-    email = ''
+    email_user = ""
     if add_info["user_id"] is not None:
         try:
-            email = User.objects.filter(id=add_info["user_id"])[0].email
+            email_user = User.objects.filter(id=add_info["user_id"])[0].email
         except Exception:
             ...
+    doc_set = DocumentSet.objects.filter(id=doc_set_id)[0]
+    producer = Producer.objects.filter(id=doc_set.producer_id)[0]
+    email_producer = User.objects.filter(id=producer.user_id)[0].email
     return HttpResponse(
-        json.dumps({"app_id": ea.app_id, "docs": response_data, "email": email}),
+        json.dumps(
+            {
+                "app_id": ea.app_id,
+                "docs": response_data,
+                "email_user": email_user,
+                "email_producer": email_producer,
+            }
+        ),
         content_type="application/json",
     )
 

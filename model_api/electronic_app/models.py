@@ -1,6 +1,6 @@
 from django.db import models
 from datetime import datetime
-
+from model_api.settings import STATICFILES_DIRS
 
 
 class ElectronicApplication(models.Model):
@@ -14,11 +14,11 @@ class ElectronicApplicationDocument(models.Model):
     file_name = models.CharField(max_length=128)
 
     def get_path(self):
-        path = os.path.join(STATICFILES_PATH,'electronic_application', f'{self.app_id}',self.file_name)
+        path = os.path.join(STATICFILES_DIRS[0],'electronic_application', f'{self.app_id}',self.file_name)
         return path
 
     def save_file(self, file_data):
-        path = os.path.join(STATICFILES_PATH,'electronic_application', f'{self.app_id}')
+        path = os.path.join(STATICFILES_DIRS[0],'electronic_application', f'{self.app_id}')
         try:
             os.mkdir(path)
         except OSError:
@@ -30,5 +30,5 @@ class ElectronicApplicationDocument(models.Model):
             fout.write(file_data)
 
     def open_file(self):
-        path = os.path.join(STATICFILES_PATH,'electronic_application', f'{self.app_id}',self.file_name)
+        path = os.path.join(STATICFILES_DIRS[0],'electronic_application', f'{self.app_id}',self.file_name)
         return open(path, 'rb')
