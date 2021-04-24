@@ -1,12 +1,18 @@
 <template>
   <div class="container">
-    <div id="nav">
-      <router-link to="/">Подписать документы</router-link> |
-      <router-link to="/create-service">Создать услугу</router-link> |
-      <router-link to="/get-service">Получить услугу</router-link> |
-      <router-link to="/login">Войти</router-link>
+    <div class="row">
+      <div id="nav">
+        <router-link to="/">Подписать документы</router-link> |
+        <router-link to="/create-service">Создать услугу</router-link> |
+        <router-link to="/get-service">Получить услугу</router-link> |
+        <router-link to="/login">Войти</router-link>
+      </div>
+      <div class="col-md-3"></div>
+      <div class="col-md-6 col 12">
+        <router-view/>
+      </div>
+      <div class="col-md-3"></div>
     </div>
-    <router-view/>
   </div>
 </template>
 

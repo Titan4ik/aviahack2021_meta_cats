@@ -1,7 +1,5 @@
 <template>
-  <div class="row">
-    <div class="col-3"></div>
-    <div class="col-6">
+    <div class="">
       <h1 class="text-center mb-5">Войти</h1>
       <p v-if="isLogin">Вы авторизованы</p>
       <form v-else v-on:submit="submit">
@@ -17,8 +15,6 @@
       </form>
       <p v-if="error">{{ error }}</p>
     </div>
-    <div class="col-3"></div>
-  </div>
 </template>
 
 <script>
