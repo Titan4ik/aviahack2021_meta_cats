@@ -3,6 +3,8 @@ from django.contrib.auth import login, authenticate
 import datetime
 import jwt
 from django.conf import settings
+from users.models import Producer
+import json
 
 user_logins = {}
 
@@ -52,8 +54,13 @@ def login_required(*,strong_auth=True, find_producer_id=False):
         def wrapper(request):
             add_param = {}
             try:
-                access_token = request.COOKIES['access_token']
-                refresh_token = request.COOKIES['refresh_token']
+                try:
+                    access_token = request.POST['access_token']
+                    refresh_token = request.POST['refresh_token']
+                except KeyError:
+                    json_data = json.loads(request.body)
+                    access_token = json_data['access_token']
+                    refresh_token = json_data['refresh_token']
                 user_id = user_logins[(access_token, refresh_token)]
                 add_param['user_id'] = user_id
             except KeyError:
@@ -62,10 +69,10 @@ def login_required(*,strong_auth=True, find_producer_id=False):
                 else:
                     add_param['user_id'] = None
             if find_producer_id:
-                producer_id = Producer.object.filter(user_id=request.GET['user_id'])
-                if not producer_id:
+                producer = Producer.objects.filter(user_id=add_param['user_id'])
+                if len(producer) != 1:
                     raise Exception('Этот метод доступен только заказчикам')
-                add_param['producer_id'] = producer_id.id
+                add_param['producer_id'] = producer[0].id
 
             return_value = func(request, add_param)
             return return_value

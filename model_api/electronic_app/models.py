@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 class ElectronicApplication(models.Model):
-    app_id = models.AutoField
+    id = models.AutoField
     doc_set_id = models.IntegerField()
     completed_date = models.DateField(default=datetime.now)
     consumer_id = models.IntegerField(default=None)

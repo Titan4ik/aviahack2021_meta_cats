@@ -22,6 +22,7 @@ def sign_up(request):
         return HttpResponse(json.dumps({'status': 'ok'}), content_type="application/json")
 
 def logout(request):
-    access_token = request.COOKIES['access_token']
-    refresh_token = request.COOKIES['refresh_token']
+    json_data = json.loads(request.body)
+    access_token = json_data['access_token']
+    refresh_token = json_data['refresh_token']
     auth.logout(access_token, refresh_token)
