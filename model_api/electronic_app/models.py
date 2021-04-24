@@ -14,8 +14,8 @@ class ElectronicApplicationDocument(models.Model):
     file_name = models.CharField(max_length=128)
 
     def get_path(self):
-            path = os.path.join(STATICFILES_PATH,'electronic_application', f'{self.app_id}',self.file_name)
-            return path
+        path = os.path.join(STATICFILES_PATH,'electronic_application', f'{self.app_id}',self.file_name)
+        return path
 
     def save_file(self, file_data):
         path = os.path.join(STATICFILES_PATH,'electronic_application', f'{self.app_id}')

@@ -65,10 +65,13 @@ def fill_docs(request, add_info: dict):
     
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-def get_tags(request):
+@login_required(strong_auth=False)
+def get_tags(request, add_info: dict):
     response_data = load_tags(request.GET['doc_set_id'])
     if 'подпись' in response_data:
         response_data.remove('подпись')
+
+    tags = {} 
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
@@ -81,8 +84,7 @@ def add_docs(request, add_info: dict):
     doc_set_id = doc_set.id
 
     tags = []
-    for f in request.FILES.getlist('files'):
-        file_data = f
+    for file_data in request.FILES.getlist('files'):
         doc_name=file_data.name
         doc = Document(doc_set_id=doc_set_id, doc_name=doc_name)
         doc.save()
