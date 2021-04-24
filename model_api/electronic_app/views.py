@@ -11,10 +11,11 @@ from model_api.settings import STATICFILES_DIRS
 from users.models import Producer
 import os
 
+
 @login_required(strong_auth=False)
 def create(request, add_info: dict):
     doc_set_id = request.GET["doc_set_id"]
-    imagestr = request.POST['el_sign'].replace('data:image/png;base64','')
+    imagestr = request.POST["el_sign"].replace("data:image/png;base64", "")
 
     docs = Document.objects.filter(doc_set_id=doc_set_id)
 
@@ -52,22 +53,16 @@ def create(request, add_info: dict):
                 "path": f"{doc_name}.pdf",
             }
         )
-   
+
     doc_set = DocumentSet.objects.filter(id=doc_set_id)[0]
     producer = Producer.objects.filter(id=doc_set.producer_id)[0]
     email_producer = User.objects.filter(id=producer.user_id)[0].email
-    email_user = tags['email']
+    email_user = tags["email"]
 
-    send_email(email_producer, 'sagfgsa')
-    send_email(email_user, 'sagfgsa')
-    return HttpResponse(
-        json.dumps(
-            {
-                "status": 'ok'
-            }
-        ),
-        content_type="application/json",
-    )
+    send_email(email_producer, "sagfgsa")
+    send_email(email_user, "sagfgsa")
+    return HttpResponse(json.dumps({"status": "ok"}), content_type="application/json",)
+
 
 def send_email(email, data):
-    print(f'send {email} success!')
+    print(f"send {email} success!")
