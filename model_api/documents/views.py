@@ -67,6 +67,8 @@ def fill_docs(request, add_info: dict):
 
 def get_tags(request):
     response_data = load_tags(request.GET['doc_set_id'])
+    if 'подпись' in response_data:
+        response_data.remove('подпись')
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
