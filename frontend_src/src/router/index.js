@@ -26,6 +26,12 @@ const routes = [{
         name: 'GetService',
         component: () =>
             import ('../views/GetService.vue')
+    },
+    {
+        path: '/get-services',
+        name: 'GetServices',
+        component: () =>
+            import ('../views/GetServices.vue')
     }
 ]
 

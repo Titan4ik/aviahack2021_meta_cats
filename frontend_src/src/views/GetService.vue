@@ -1,118 +1,143 @@
 <template>
 <div id="get-service">
-    <h1>Услуга №1</h1>
+    <h1>Некоторая услуга</h1>
     <p>Описание услуги</p>
-    <h2>Необходимые документы</h2>
-        <div class="list-group need_doc_wrapper">
-            <a href="#" class="list-group-item list-group-item-action">Согласие о персональных данных.</a>
-            <a href="#" class="list-group-item list-group-item-action">Договор на предоставление услуги.</a>
+    <div v-if="docs">
+        <p>Эти данные нужны для заполнения следующих документов:</p>
+        <ul>
+            <li v-for="doc in docs" :key="doc.doc_id">
+                <a :href="'http://188.120.226.213:8000/static' + doc.path" data-bs-toggle="modal" data-bs-target="#exampleModal">{{ doc.doc_name }}</a>
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">{{ doc.doc_name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <object :data="'http://188.120.226.213:8000/static' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720"></object>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </li>
+        </ul>
     </div>
     <h2>Для предоставления услуги необходимы следующие данные</h2>
-    <form>
-        <div class="form-group">
-            <label for="exampleFormControlInput1">ФИО</label>
-            <input type="text" class="form-control" readonly id="formName" placeholder="Иванов Иван Иванович" required value="Иванов Иван Иванович">
+    <form v-if="tags" @submit="submitTags">
+        <div v-for="tag in tags" :key="tag" class="form-group">
+            <label class="w-100">
+                {{ tag }}
+                <input type="text" class="form-control" :name="tag"  required>
+            </label>
         </div>
-        <div class="form-group">
-            <label for="exampleFormControlInput2">Серия и номер паспорта</label>
-            <input type="text" class="form-control" id="formPasport" placeholder="1111 111111">
-        </div>
-        <div class="form-group">
-            <label for="exampleFormControlInput2">Кем и когда выдан</label>
-            <input type="text" class="form-control" id="formPasportInfo" placeholder="Населенный пункт, орган, дата, код подразделения">
-        </div>
-        <div class="form-group">
-            <label for="exampleFormControlInput2">Адрес регистрации</label>
-            <input type="text" class="form-control" id="formRegInfo" placeholder="Населенный пункт, орган, дата, код подразделения">
-        </div>
-        <div class="form-group">
-            <label for="exampleInputEmail1">Email</label>
-            <input type="email" class="form-control" id="formEmail1" aria-describedby="emailHelp" placeholder="ivanov@example.com">
-        </div>
-        <button type="button" class="btn btn-primary btn-lg btn-block">Отправить</button>
-        
+        <button type="submit" class="btn btn-primary btn-block">Отправить</button>
     </form>
-    <h2>Предварительный вид документов</h2>
-    <div id="accordion" role="tablist" aria-multiselectable="true">
-        <div class="card">
-            <div class="card-header" role="tab" id="headingOne">
-            <h5 class="mb-0">
-                <a data-toggle="collapse" data-parent="#accordion"  href="#" aria-expanded="true" aria-controls="collapseOne">
-                Документ #1
-                </a>
-            </h5>
+    <div :hidden="!isTagsSubmited">
+        <h2>Предварительный вид документов</h2>
+        <div id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="card">
+                <div class="card-header" role="tab" id="headingOne">
+                <h5 class="mb-0">
+                    <a data-toggle="collapse" data-parent="#accordion"  href="#" aria-expanded="true" aria-controls="collapseOne">
+                    Документ #1
+                    </a>
+                </h5>
+                </div>
+                <div id="collapseOne" class="collapse " role="tabpanel" aria-labelledby="headingOne">
+                    <div class="card-block">
+                        Содержимое документа 1
+                    </div>
+                </div>
             </div>
-            <div id="collapseOne" class="collapse " role="tabpanel" aria-labelledby="headingOne">
-                <div class="card-block">
-                    Содержимое документа 1
+            <div class="card">
+                <div class="card-header" role="tab" id="headingOne">
+                <h5 class="mb-0">
+                    <a data-toggle="collapse" data-parent="#accordion"  href="#" aria-expanded="true" aria-controls="collapseOne">
+                    Документ #1
+                    </a>
+                </h5>
+                </div>
+                <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="card-block">
+                        Содержимое документа 1
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="card">
-            <div class="card-header" role="tab" id="headingOne">
-            <h5 class="mb-0">
-                <a data-toggle="collapse" data-parent="#accordion"  href="#" aria-expanded="true" aria-controls="collapseOne">
-                Документ #1
-                </a>
-            </h5>
-            </div>
-            <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
-                <div class="card-block">
-                    Содержимое документа 1
-                </div>
-            </div>
-        </div>
-    </div>
-    <div>
-</div>
-    <h2>Подписать все необходимые документы</h2>
-<div class="signature_wrapper">
+        <h2>Подписать все необходимые документы</h2>
+        <div class="signature_wrapper">
             <canvas id="signature-pad" class="signature-pad" width=300 height=100></canvas>
         </div>
         <div><button type="button" id="clear" class="clear-button" @click="clearSign">Очистить</button></div>
-    <button class="btn btn-primary btn-lg btn-block" type="submit">Подписать</button>
-  </div>
+        <button class="btn btn-primary btn-block" type="submit">Подписать</button>
+    </div>
+</div>
 </template>
 
 <script>
-
+import api from '@/api/'
 import * as SignaturePad from 'signature_pad';
 
 export default {
   data() {
     return {
       canvas: {},
-      signaturePad: {}
+      signaturePad: {},
+      tags: false,
+      docs: false,
+      isTagsSubmited: false
     }
   },
   name: 'GetService',
   components: { },
     mounted(){
-        console.log(213412);
-        this.canvas = document.querySelector("#signature-pad");
+        this.canvas = document.querySelector("#signature-pad")
         this.signaturePad = new SignaturePad.default(this.canvas, {
             penColor: 'rgb(0, 0, 0)'
-        });
+        })
         
+        this.getTags()
+        this.getDocs()
     },
     methods:
     {
+        getTags() {
+            api.getTags(13)
+            .then(async response => {
+                if (response.ok) {
+                    this.tags = await response.json()
+                }
+            })
+        },
+        getDocs() {
+            api.getDocs(13)
+            .then(async response => {
+                if (response.ok) {
+                    this.docs = await response.json()
+                }
+            })
+        },
+        submitTags(event) {
+            event.preventDefault()
+            this.isTagsSubmited = true
+        },
         clearSign: function () {
-            this.signaturePad.clear();
+            this.signaturePad.clear()
         }
-
     }
 }
 </script>
 <style>
 .btn-block
 {
-    width:100%;
     margin: 20px 0;
 }
 .form-group label
 {
-    font-size: 20px;
     margin: 15px 0 5px;
 }
 .signature_wrapper
@@ -126,16 +151,15 @@ export default {
     user-select: none;
     border: #CCC solid 1px;
     background-image: url(../assets/sign.png); 
-    background-color: #ffffee;
+    background-color: #fafafa;
     margin:20px 0 10px;
-
 }
 .signature-pad {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width:300px;
-  height:100px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width:300px;
+    height:100px;
 }
 .clear-button
 {
