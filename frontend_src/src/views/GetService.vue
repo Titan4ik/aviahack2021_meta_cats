@@ -29,13 +29,10 @@
             <label for="exampleInputEmail1">Email</label>
             <input type="email" class="form-control" id="formEmail1" aria-describedby="emailHelp" placeholder="ivanov@example.com">
         </div>
-        <div class="signature_wrapper">
-        </div>
-        <div><button type="button" class="clear-button">Очистить</button></div>
-        <button type="button" class="btn btn-primary btn-lg btn-block">Заполнить и подписать все документы</button>
+        <button type="button" class="btn btn-primary btn-lg btn-block">Отправить</button>
         
     </form>
-    <h2>Заполненные документы</h2>
+    <h2>Предварительный вид документов</h2>
     <div id="accordion" role="tablist" aria-multiselectable="true">
         <div class="card">
             <div class="card-header" role="tab" id="headingOne">
@@ -68,25 +65,43 @@
     </div>
     <div>
 </div>
-    <button class="btn btn-primary btn-lg btn-block" type="submit">Отправить</button>
+    <h2>Подписать все необходимые документы</h2>
+<div class="signature_wrapper">
+            <canvas id="signature-pad" class="signature-pad" width=300 height=100></canvas>
+        </div>
+        <div><button type="button" id="clear" class="clear-button" @click="clearSign">Очистить</button></div>
+    <button class="btn btn-primary btn-lg btn-block" type="submit">Подписать</button>
   </div>
 </template>
 
 <script>
 
+import * as SignaturePad from 'signature_pad';
 
 export default {
+  data() {
+    return {
+      canvas: {},
+      signaturePad: {}
+    }
+  },
   name: 'GetService',
   components: { },
-  methods: {
-    undo() {
-      console.log('=== End ===');
-      this.$refs.signaturePad.undoSignature();
+    mounted(){
+        console.log(213412);
+        this.canvas = document.querySelector("#signature-pad");
+        this.signaturePad = new SignaturePad.default(this.canvas, {
+            penColor: 'rgb(0, 0, 0)'
+        });
+        
     },
-    onEnd() {
-      console.log('=== End ===');
+    methods:
+    {
+        clearSign: function () {
+            this.signaturePad.clear();
+        }
+
     }
-  }
 }
 </script>
 <style>
@@ -112,7 +127,7 @@ export default {
     border: #CCC solid 1px;
     background-image: url(../assets/sign.png); 
     background-color: #ffffee;
-    margin:30px 0 10px;
+    margin:20px 0 10px;
 
 }
 .signature-pad {
