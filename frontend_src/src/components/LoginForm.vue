@@ -7,20 +7,23 @@
       <form v-else v-on:submit="submit">
         <div class="mb-3">
           <label for="exampleInputEmail1" class="form-label">Логин</label>
-          <input type="text" name="login" class="form-control" id="exampleInputEmail1">
+          <input type="text" name="username" class="form-control" id="exampleInputEmail1">
         </div>
         <div class="mb-3">
           <label for="exampleInputPassword1" class="form-label">Пароль</label>
           <input type="password" name="password" class="form-control" id="exampleInputPassword1">
         </div>
         <button type="submit" class="btn btn-primary">Войти</button>
-      </form> 
+      </form>
+      <p v-if="error">{{ error }}</p>
     </div>
     <div class="col-3"></div>
   </div>
 </template>
 
 <script>
+import api from '@/api/'
+
 export default {
   name: 'LoginForm',
   props: {
@@ -42,19 +45,17 @@ export default {
 
       const formData = new FormData(event.target)
 
-      fetch('http://188.120.226.213:8000/users/sign_in/', {
-        method: 'POST',
-        body: formData,
-        credentials: 'include'
-      })
-      .then(response => {
+      api.signIn(formData)
+      .then(async response => {
         if (response.ok) {
           this.isLogin = true
-          const tokens = response.json();
-          if (tokens) {
-            this.$cookies.set('access_token', 'access_token');
-            this.$cookies.set('refresh_token', 'access_token');
-          }
+          this.error = false
+          const tokens = await response.json()
+          console.log(tokens)
+          localStorage.setItem('access_token', tokens.access_token)
+          localStorage.setItem('refresh_token', tokens.refresh_token)
+        } else {
+          this.error = 'Не удалось авторизоваться: ' + response.status
         }
       })
       .catch(error => {

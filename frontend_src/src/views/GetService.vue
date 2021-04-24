@@ -1,11 +1,12 @@
 <template>
+<div id="get-service">
     <h1>Услуга №1</h1>
-    <!-- <p>Описание услуги</p>
+    <p>Описание услуги</p>
     <h2>Необходимые документы</h2>
-    <ul>
-        <li>1. Согласие о персональных данных.</li>
-        <li>2. Договор на предоставление услуги.</li>
-    </ul>
+        <div class="list-group need_doc_wrapper">
+            <a href="#" class="list-group-item list-group-item-action">Согласие о персональных данных.</a>
+            <a href="#" class="list-group-item list-group-item-action">Договор на предоставление услуги.</a>
+    </div>
     <h2>Для предоставления услуги необходимы следующие данные</h2>
     <form>
         <div class="form-group">
@@ -28,62 +29,71 @@
             <label for="exampleInputEmail1">Email</label>
             <input type="email" class="form-control" id="formEmail1" aria-describedby="emailHelp" placeholder="ivanov@example.com">
         </div>
-        <button type="button" class="btn btn-secondary btn-lg btn-block">Заполнить документы</button>
+        <div class="signature_wrapper">
+        </div>
+        <div><button type="button" class="clear-button">Очистить</button></div>
+        <button type="button" class="btn btn-primary btn-lg btn-block">Заполнить и подписать все документы</button>
+        
     </form>
-    <h2>Ознакомтесь с документами</h2>
-    <div>Документы</div>
-    <h2>Подпишите все документы</h2>
-    <div class="signature_wrapper">
-        <VueSignaturePad width="300px" height="100px" ref="signaturePad" />
+    <h2>Заполненные документы</h2>
+    <div id="accordion" role="tablist" aria-multiselectable="true">
+        <div class="card">
+            <div class="card-header" role="tab" id="headingOne">
+            <h5 class="mb-0">
+                <a data-toggle="collapse" data-parent="#accordion"  href="#" aria-expanded="true" aria-controls="collapseOne">
+                Документ #1
+                </a>
+            </h5>
+            </div>
+            <div id="collapseOne" class="collapse " role="tabpanel" aria-labelledby="headingOne">
+                <div class="card-block">
+                    Содержимое документа 1
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" role="tab" id="headingOne">
+            <h5 class="mb-0">
+                <a data-toggle="collapse" data-parent="#accordion"  href="#" aria-expanded="true" aria-controls="collapseOne">
+                Документ #1
+                </a>
+            </h5>
+            </div>
+            <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
+                <div class="card-block">
+                    Содержимое документа 1
+                </div>
+            </div>
+        </div>
     </div>
     <div>
-  <button id="save">Save</button>
-  <button id="clear">Clear</button>
 </div>
-    <button>Отправить</button>
-  <div class="get-service">
-  </div> -->
+    <button class="btn btn-primary btn-lg btn-block" type="submit">Отправить</button>
+  </div>
 </template>
 
 <script>
-// import Vue from 'vue';
-// import VueSignaturePad from 'vue-signature-pad';
-// Vue.use(VueSignaturePad);
 
-// var signaturePad;
-
-// signaturePad = new SignaturePad(document.getElementById('signature-pad'), {
-//   penColor: 'rgb(0, 0, 0)'
-// });
-// signaturePad.toDataURL('image/png');
-// // var saveButton = document.getElementById('save');
-// var cancelButton = document.getElementById('clear');
-
-// saveButton.addEventListener('click', function (event) {
-//   var data = signaturePad.toDataURL('image/png');
-
-// // Send data to server instead...
-//   window.open(data);
-// });
-
-// cancelButton.addEventListener('click', function () {
-// //   signaturePad.clear();
-// 1+1;
-// });
-
-// import CustomerForm from '@/components/CustomerForm.vue'
 
 export default {
   name: 'GetService',
-  components: {
+  components: { },
+  methods: {
+    undo() {
+      console.log('=== End ===');
+      this.$refs.signaturePad.undoSignature();
+    },
+    onEnd() {
+      console.log('=== End ===');
+    }
   }
 }
 </script>
 <style>
 .btn-block
 {
-    width:100% !important;
-    margin: 40px 0;
+    width:100%;
+    margin: 20px 0;
 }
 .form-group label
 {
@@ -99,9 +109,10 @@ export default {
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    background-image: url(../assets/sign.png); 
     border: #CCC solid 1px;
-    background-color: #ddd;
+    background-image: url(../assets/sign.png); 
+    background-color: #ffffee;
+    margin:30px 0 10px;
 
 }
 .signature-pad {
@@ -110,5 +121,24 @@ export default {
   top: 0;
   width:300px;
   height:100px;
+}
+.clear-button
+{
+    color: #00F;
+    background: none;
+    border: none;
+    border-bottom: 2px dashed;
+    padding: 0px;
+}
+.clear-button:hover
+{
+    color: #F00;
+}
+#accordion
+{
+    margin:20px 0;
+}
+#get-service{
+    padding-bottom:30px;
 }
 </style>
