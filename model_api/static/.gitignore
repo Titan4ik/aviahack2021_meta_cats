@@ -2,3 +2,6 @@
 documents/*
 !electronic_application/
 electronic_application/*
+!tmp_doc/
+tmp_doc/*
+!tmp_doc/init.txt

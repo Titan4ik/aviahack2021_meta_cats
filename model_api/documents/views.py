@@ -9,6 +9,7 @@ from model_api.auth import login_required
 from users.models import Producer
 from documents import main
 from docxtpl import DocxTemplate
+import time
 # Create your views here.
 
 def get_docs(request):
@@ -34,7 +35,11 @@ def get_doc(request):
     doc_id = request.GET['doc_id']
     doc_set_id = request.GET['doc_set_id']
     doc = Document.objects.filter(id=doc_id, doc_set_id=doc_set_id)[0]
-    return FileResponse(doc.open_file())
+
+    filename, file_extension = os.path.splitext(doc.get_name())
+    out_name = f'{filename}.pdf'
+    main.word2pdf(doc.get_name(), out_name)
+    return HttpResponse(json.dumps([out_name]), content_type="application/json")
     
 @login_required(strong_auth=False)
 def fill_doc(request, add_info: dict):
@@ -43,10 +48,12 @@ def fill_doc(request, add_info: dict):
     doc = Document.objects.filter(id=id, doc_set_id=doc_set_id)[0]
 
     tags = json.loads(request.body)
-
-    word_data = main.fill_doc(doc, tags)
-
-    return HttpResponse(main.word2html(word_data))
+    ts = time.time()
+    in_name = os.join(STATICFILES_DIRS[0],'tmp_doc',f'{ts}.docx')
+    word_data = main.fill_doc(doc, in_name, tags)
+    out_name = os.join(STATICFILES_DIRS[0],'tmp_doc',f'{ts}.pdf')
+    main.word2pdf(in_name, out_name)
+    return HttpResponse(json.dumps([out_name]), content_type="application/json")
 
 def get_tags(request):
     response_data = load_tags(request.GET['doc_set_id'])
