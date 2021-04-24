@@ -15,7 +15,7 @@ def create(request, add_info: dict):
 
     docs = Document.objects.filter(doc_set_id=doc_set_id)
 
-    tags = json.loads(request.body)
+    tags = dict(request.POST.items())
     ea = ElectronicApplication(doc_set_id=doc_set_id, consumer_id=add_info["user_id"])
     ea.save()
 

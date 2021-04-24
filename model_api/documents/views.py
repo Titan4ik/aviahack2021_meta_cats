@@ -44,13 +44,14 @@ def get_doc(request):
 def fill_docs(request, add_info: dict):
     doc_set_id = request.GET['doc_set_id']
     docs = Document.objects.filter(doc_set_id=doc_set_id)
-
-    tags = json.loads(request.body)
+    
+    tags = dict(request.POST.items())
+    
     ts = time.time()
 
     response_data = []
     for i, doc in enumerate(docs):
-        in_name = os.path.join(STATICFILES_DIRS[0],'tmp_doc',f'{ts}_{request.COOKIES["sessionid"]}_{i}.docx')
+        in_name = os.path.join(STATICFILES_DIRS[0],'tmp_doc',f'{ts}_{i}.docx')
         word_data = main.fill_doc(doc, in_name, tags)
         out_name = os.path.join(STATICFILES_DIRS[0],'tmp_doc')
         main.word2pdf(in_name, out_name)
@@ -59,7 +60,7 @@ def fill_docs(request, add_info: dict):
             {
                 'doc_id': doc.id,
                 'doc_name': f'{doc_name}.pdf',
-                'path': os.path.join('', 'tmp_doc',f'{ts}_{request.COOKIES["sessionid"]}_{i}.pdf')
+                'path': os.path.join('tmp_doc',f'{ts}_{i}.pdf')
             }
         )
     
