@@ -19,6 +19,7 @@
 
 <script>
 import api from '@/api/'
+import store from '@/store/'
 
 export default {
   name: 'LoginForm',
@@ -27,8 +28,13 @@ export default {
 
   data() {
     return {
-      isLogin: false,
       error: false
+    }
+  },
+
+  computed: {
+    isLogin() {
+      return store.isLogin
     }
   },
 
@@ -44,7 +50,7 @@ export default {
       api.signIn(formData)
       .then(async response => {
         if (response.ok) {
-          this.isLogin = true
+          store.isLogin = true
           this.error = false
           const tokens = await response.json()
           console.log(tokens)
