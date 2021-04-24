@@ -79,6 +79,13 @@ const api = {
       credentials: 'include'
     })
   },
+
+  getDocSets() {
+    return fetch('http://188.120.226.213:8000/documents/get_doc_sets/', {
+      method: 'GET',
+      credentials: 'include'
+    })
+  },
 }
 
 export default api

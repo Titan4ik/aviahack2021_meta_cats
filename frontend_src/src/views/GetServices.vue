@@ -1,28 +1,43 @@
 <template>
 <div id="get-services">
     <h1>Список услуг</h1>
-    <h2>Поставщик 1</h2>
-    <div class="list-group">
-  <a href="get-service?id=11" class="list-group-item list-group-item-action">Услуга №1.1</a>
-  <a href="get-service?id=12" class="list-group-item list-group-item-action">Услуга №1.2</a>
-</div>
-    <h2>Поставщик 2</h2>
-    <div class="list-group">
-  <a href="get-service?id=21" class="list-group-item list-group-item-action">Услуга №2.1</a>
-  <a href="get-service?id=22" class="list-group-item list-group-item-action">Услуга №2.2</a>
-</div>
-    <h2>Поставщик 3</h2>
-    <div class="list-group">
-  <a href="get-service?id=31" class="list-group-item list-group-item-action">Услуга №3.1</a>
-  <a href="get-service?id=32" class="list-group-item list-group-item-action">Услуга №3.2</a>
-</div>
+    <div v-if="docSets">
+      <div v-for="docSet in docSets" :key="docSet.producer_name">
+        <h2>{{ docSet.producer_name }}</h2>
+        <ul v-if="docSet.offers" class="list-group list-group-flush">
+          <li class="list-group-item">
+            <a v-for="offer in docSet.offers" :key="offer.offer_id" :href="`get-service/${offer.id}`">{{ offer.description }}</a>
+          </li>
+        </ul>
+        <p v-else>У этого постовщика пока нет услуг</p>
+      </div>
+    </div>
+    <p v-else>Получаем доступные услуги...</p>
 </div>
 </template>
 
 <script>
-
+import api from '@/api/'
 export default {
-    name: 'GetServices'
+    name: 'GetServices',
+    data() {
+      return {
+        docSets: false
+      }
+    },
+    mounted() {
+      this.getDocSets()
+    },
+    methods: {
+      getDocSets() {
+        api.getDocSets()
+        .then(async response => {
+          if (response.ok) {
+            this.docSets = await response.json()
+          }
+        })
+      }
+    }
 }
 </script>
 
