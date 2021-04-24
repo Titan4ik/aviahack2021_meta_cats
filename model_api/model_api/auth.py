@@ -41,7 +41,7 @@ def sign_in(request, username, password):
     user = authenticate(username=username, password=password)
     login(request, user)
     tokens = _generate_tokens(user)
-    return tokens
+    return {'access_token': tokens[0], 'refresh_token': tokens[1]}
 
 def sign_up(username, password, email):
     user = User.objects.create_user(username=username, email=email, password=password)

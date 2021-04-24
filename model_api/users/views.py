@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from model_api import auth
 import json
+from django.http import HttpResponse
+
 # Create your views here.
 def sign_in(request):
     username = request.POST['username']
