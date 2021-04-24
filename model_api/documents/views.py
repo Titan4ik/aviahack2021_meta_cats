@@ -10,6 +10,7 @@ from users.models import Producer
 from documents import main
 from docxtpl import DocxTemplate
 import time
+from users.models import UserInfo
 # Create your views here.
 
 def get_docs(request):
@@ -71,9 +72,18 @@ def get_tags(request, add_info: dict):
     response_data = load_tags(request.GET['doc_set_id'])
     if 'подпись' in response_data:
         response_data.remove('подпись')
-
-    tags = {} 
-    return HttpResponse(json.dumps(response_data), content_type="application/json")
+    response_data.append('email')
+    tags = {}
+    if add_info['user_id'] is not None:
+        tmp = UserInfo.objects.filter(user_id=add_info['user_id'])
+        if len(tmp) == 1:
+            user_info = tmp[0]
+            for tag in response_data:
+                value = user_info.get_param(tag)
+                if value is not None:
+                    tags[tag] = value
+     
+    return HttpResponse(json.dumps({'tags': response_data, 'filled':tags}), content_type="application/json")
 
 
 

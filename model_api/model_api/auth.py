@@ -6,8 +6,6 @@ from django.conf import settings
 from users.models import Producer, AuthTokens
 import json
 
-user_logins = {}
-
 
 def _generate_access_token(user):
     access_token_payload = {

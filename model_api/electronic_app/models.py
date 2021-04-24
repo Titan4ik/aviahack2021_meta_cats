@@ -1,13 +1,14 @@
 from django.db import models
 from datetime import datetime
 from model_api.settings import STATICFILES_DIRS
+import os
 
 
 class ElectronicApplication(models.Model):
     id = models.AutoField
     doc_set_id = models.IntegerField()
     completed_date = models.DateField(default=datetime.now)
-    consumer_id = models.IntegerField(default=None)
+    consumer_id = models.IntegerField(blank=True, null=True)
 
 class ElectronicApplicationDocument(models.Model):
     app_id = models.IntegerField()

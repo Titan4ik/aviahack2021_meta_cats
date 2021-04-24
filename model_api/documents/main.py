@@ -14,8 +14,8 @@ def fill_doc(document: Document, out_name, tags: dict, electronic_signature: str
     context = tags
     doc = DocxTemplate(document.get_path())
     if electronic_signature is not None:
-        context["image"] = InlineImage(
-            doc, electronic_signature, width=Pt(100), height=Pt(200)
+        context["подпись"] = InlineImage(
+            doc, electronic_signature, width=Pt(75), height=Pt(50)
         )
     doc.render(context)
     doc.save(out_name)
