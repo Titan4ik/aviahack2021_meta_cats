@@ -55,7 +55,7 @@ def create(request, add_info: dict):
     email_producer = User.objects.filter(id=producer.user_id)[0].email
     email_user = tags["email"]
 
-    send_mails(email_user, email_producer, files, f'Услуга №{doc_set_id} "{doc_set_name}"')
+    send_mails(email_user, email_producer, files, f'Услуга №{doc_set_id}. {doc_set.name}')
 
     return HttpResponse(json.dumps({"status": "ok"}), content_type="application/json",)
 
