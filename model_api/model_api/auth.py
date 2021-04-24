@@ -65,7 +65,7 @@ def login_required(*,strong_auth=True, find_producer_id=False):
                 producer_id = Producer.object.filter(user_id=request.GET['user_id'])
                 add_param['producer_id'] = producer_id.id
 
-            return_value = func(request)
+            return_value = func(request, add_param)
             return return_value
         return wrapper
     return wrapper0
