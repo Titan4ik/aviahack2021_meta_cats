@@ -10,6 +10,7 @@ from base64 import decodestring
 from model_api.settings import STATICFILES_DIRS
 from users.models import Producer
 import os
+from electronic_app.main import send_mails
 
 
 @login_required(strong_auth=False)
@@ -34,7 +35,7 @@ def create(request, add_info: dict):
     with open(image_path, "wb") as f:
         f.write(decodestring(imagestr.encode()))
 
-    response_data = []
+    files = []
 
     for i, doc in enumerate(docs):
         ead = ElectronicApplicationDocument(app_id=ea.id, file_name=doc.get_name())
@@ -47,22 +48,14 @@ def create(request, add_info: dict):
         main.word2pdf(in_name, out_name)
         doc_name, _ = os.path.splitext(in_name)
 
-        response_data.append(
-            {
-                "doc_name": f"{os.path.splitext(os.path.basename(in_name))}.pdf",
-                "path": f"{doc_name}.pdf",
-            }
-        )
+        files.append(f"{doc_name}.pdf")
 
     doc_set = DocumentSet.objects.filter(id=doc_set_id)[0]
     producer = Producer.objects.filter(id=doc_set.producer_id)[0]
     email_producer = User.objects.filter(id=producer.user_id)[0].email
     email_user = tags["email"]
 
-    send_email(email_producer, "sagfgsa")
-    send_email(email_user, "sagfgsa")
+    send_mails(email_user, email_producer, files, f'Услуга №{doc_set_id} "{doc_set_name}"')
+
     return HttpResponse(json.dumps({"status": "ok"}), content_type="application/json",)
 
-
-def send_email(email, data):
-    print(f"send {email} success!")
