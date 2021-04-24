@@ -54,7 +54,7 @@ def save_tags(doc_set_id, tags):
 
 def load_tags(doc_set_id):
     path = os.path.join(STATICFILES_PATH,'documents', f'{doc_set_id}','tags.json')
-    with open(path, 'r', encoding='utf-8') as outfile:
+    with open(path, 'r', encoding='ascii') as outfile:
         tags = json.load(outfile)
     return tags
 
