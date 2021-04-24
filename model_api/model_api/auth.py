@@ -4,6 +4,7 @@ import datetime
 import jwt
 from django.conf import settings
 from users.models import Producer
+import json
 
 user_logins = {}
 
@@ -53,8 +54,9 @@ def login_required(*,strong_auth=True, find_producer_id=False):
         def wrapper(request):
             add_param = {}
             try:
-                access_token = request.POST['access_token']
-                refresh_token = request.POST['refresh_token']
+                json_data = json.loads(request.body)
+                access_token = json_data['access_token']
+                refresh_token = json_data['refresh_token']
                 user_id = user_logins[(access_token, refresh_token)]
                 add_param['user_id'] = user_id
             except KeyError:
