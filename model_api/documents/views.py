@@ -8,6 +8,7 @@ from documents.models import load_tags, Document, DocumentSet, save_tags
 from model_api.auth import login_required
 from users.models import Producer
 from documents import main
+from docxtpl import DocxTemplate
 # Create your views here.
 
 def get_docs(request):
