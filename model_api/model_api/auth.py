@@ -3,6 +3,7 @@ from django.contrib.auth import login, authenticate
 import datetime
 import jwt
 from django.conf import settings
+from users.models import Producer
 
 user_logins = {}
 
@@ -62,10 +63,10 @@ def login_required(*,strong_auth=True, find_producer_id=False):
                 else:
                     add_param['user_id'] = None
             if find_producer_id:
-                producer_id = Producer.object.filter(user_id=request.GET['user_id'])
-                if not producer_id:
+                producer = Producer.objects.filter(user_id=add_param['user_id'])
+                if len(producer) != 1:
                     raise Exception('Этот метод доступен только заказчикам')
-                add_param['producer_id'] = producer_id.id
+                add_param['producer_id'] = producer[0].id
 
             return_value = func(request, add_param)
             return return_value

@@ -21,7 +21,7 @@ def get_docs(request):
     docs = Document.objects.filter(doc_set_id=doc_set_id)
     response_data = [
         {
-            'doc_id': doc.doc_id,
+            'doc_id': doc.id,
             'doc_name': doc.doc_name
         }
         for doc in docs
@@ -29,12 +29,9 @@ def get_docs(request):
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 def get_doc(request):
-    '''
-        вернет документ, и если указан flg_feel true, то заполнит его
-    '''
     doc_id = request.GET['doc_id']
     doc_set_id = request.GET['doc_set_id']
-    doc = Document.object.filter(doc_id=doc_id, doc_set_id=doc_set_id)
+    doc = Document.objects.filter(id=doc_id, doc_set_id=doc_set_id)[0]
     return FileResponse(doc.open_file())
     
 @login_required(strong_auth=False)
@@ -45,7 +42,7 @@ def fill_doc(request, add_info: dict):
     doc_id = request.GET['doc_id']
     doc_set_id = request.GET['doc_set_id']
     data_from = request.GET['data_from']
-    doc = Document.object.filter(doc_id=doc_id, doc_set_id=doc_set_id)
+    doc = Document.objects.filter(id=id, doc_set_id=doc_set_id)[0]
     file_data = doc.open_file()
     # TODO добавить заполнение файла
     return FileResponse(file_data)
@@ -58,20 +55,19 @@ def get_tags(request):
 
 @login_required(find_producer_id=True)
 def add_docs(request, add_info: dict):
-    file_count = request.GET['file_count']
+    file_count = int(request.GET['file_count'])
     description = request.GET['description']
-    producer_id = Producer.object.filter(user_id=request.GET['user_id'])
-    doc_set = DocumentSet(description=description,producer_id=producer_id)
+    doc_set = DocumentSet(description=description,producer_id=add_info['producer_id'])
     doc_set.save()
-    doc_set_id = doc_set.doc_set_id
+    doc_set_id = doc_set.id
 
     for i in range(file_count):
         file_data = request.FILES[f'file_{i}']
-        doc_name=file_data['name']
+        doc_name=file_data.name
         doc = Document(doc_set_id=doc_set_id, doc_name=doc_name)
         doc.save()
         filename, file_extension = os.path.splitext(doc_name)
-        doc.save_file(file_data.read(), file_extension)
+        doc.save_file(file_data.read())
     tags = []
     save_tags(doc_set_id, tags)
 

@@ -7,7 +7,7 @@ STATICFILES_PATH = STATICFILES_DIRS[0]
 
 
 class Document(models.Model):
-    doc_id = models.AutoField
+    id = models.AutoField
     doc_set_id = models.IntegerField()
     doc_name = models.CharField(max_length=128)
 
@@ -38,7 +38,7 @@ class Document(models.Model):
 
 
 class DocumentSet(models.Model):
-    doc_set_id = models.AutoField
+    id = models.AutoField
     producer_id = models.IntegerField(default=None)
     description = models.CharField(max_length=256)
 
@@ -54,7 +54,7 @@ def save_tags(doc_set_id, tags):
 
 def load_tags(doc_set_id):
     path = os.path.join(STATICFILES_PATH,'documents', f'{doc_set_id}','tags.json')
-    with open(path, 'w') as outfile:
-        tags = json.loads(outfile)
+    with open(path, 'r') as outfile:
+        tags = json.load(outfile)
     return tags
 

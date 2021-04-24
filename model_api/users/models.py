@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class Producer(models.Model):
-    producer_id = models.AutoField
+    id = models.AutoField
     user_id = models.IntegerField()
     company_name = models.CharField(max_length=128)
     confirmed = models.BooleanField(default=False)
