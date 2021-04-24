@@ -2,13 +2,15 @@
 <div id="get-service">
     <h1>Некоторая услуга</h1>
     <p>Описание услуги</p>
+    <div v-if="docs">
+        <p>Эти данные нужны для заполнения следующих документов:</p>
+        <ul>
+            <li v-for="doc in docs" :key="doc.doc_id">
+                {{ doc.doc_name }}
+            </li>
+        </ul>
+    </div>
     <h2>Для предоставления услуги необходимы следующие данные</h2>
-    <p>Эти данные нужны для заполнения следующих документов:</p>
-    <ul v-if="docs">
-        <li v-for="doc in docs" :key="doc.doc_id">
-            {{ doc.doc_name }}
-        </li>
-    </ul>
     <form v-if="tags" @submit="submitTags">
         <div v-for="tag in tags" :key="tag" class="form-group">
             <label class="w-100">
