@@ -44,6 +44,8 @@ def logout(access_token, refresh_token):
 
 def sign_in(request, username, password):
     user = authenticate(username=username, password=password)
+    if user is None:
+        raise Exception('Ошибка авторизации')
     login(request, user)
     tokens = _generate_tokens(user)
     return {"access_token": tokens[0], "refresh_token": tokens[1]}
