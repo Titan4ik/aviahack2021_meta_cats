@@ -2,6 +2,7 @@ from docxtpl import DocxTemplate
 from docxtpl import InlineImage
 from docxtpl import Listing
 from docx.shared import Pt
+from docx2pdf import convert
 # myimage = InlineImage(tpl,'test_files/python_logo.png',width=Mm(20))
 
 available_tags = {'tag_1', 'tag_2', 'tag_4', 'image'}
@@ -16,3 +17,4 @@ print("Данные теги не доступны:", unavailable_tags)
 context = {**{ 'tag_1' : "INSERT TEXT" }, **{'tag_6' : '{{ tag_6 }}'}, **{'image' : InlineImage(doc,'dsdsa.svg',width=Pt(100), height=Pt(200))}}
 doc.render(context)
 doc.save("generated_doc.docx")
+convert("generated_doc.docx", "generated_doc.pdf")
