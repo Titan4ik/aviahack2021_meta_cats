@@ -7,30 +7,21 @@ class Producer(models.Model):
     company_name = models.CharField(max_length=128)
     confirmed = models.BooleanField(default=False)
 
-class UserInfo(models.Model):
-    user_id = models.IntegerField()
-    first_name = models.CharField(max_length=128)
-    second_name = models.CharField(max_length=128)
-    third_name = models.CharField(max_length=128)
-    passport_series = models.CharField(max_length=4)
-    passport_number = models.CharField(max_length=6)
-    date_of_birth = models.DateField()
+class UserInfoTags(models.Model):
+    class Meta:
+        unique_together = (('user_id', 'param_name'),)
 
-    def get_param(self, param_name):
-        param_name = param_name.lower()
-        if param_name == 'фамилия':
-            return self.first_name
-        if param_name == 'имя':
-            return self.second_name
-        if param_name == 'отчество':
-            return self.third_name
-        if param_name == 'серия паспорта':
-            return self.passport_series
-        if param_name == 'номер паспорта':
-            return self.passport_number
-        if param_name == 'дата рождения':
-            return self.date_of_birth
-        return None
+    user_id = models.IntegerField()
+    param_name = models.CharField(max_length=256)
+    param_value = models.CharField(max_length=256)
+
+def get_user_tags(user_id):
+    tags = UserInfoTags.objects.filter(user_id=user_id)
+    return {
+        tag.param_name: tag.param_value
+        for tag in tags
+    }
+
 
 class AuthTokens(models.Model):
     user_id = models.IntegerField()

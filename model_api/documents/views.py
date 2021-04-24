@@ -10,7 +10,7 @@ from users.models import Producer
 from documents import main
 from docxtpl import DocxTemplate
 import time
-from users.models import UserInfo
+from users.models import UserInfoTags, get_user_tags
 # Create your views here.
 
 def get_docs(request):
@@ -38,8 +38,6 @@ def get_docs(request):
     
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-def get_doc(request):
-    ...
     
 @login_required(strong_auth=False)
 def fill_docs(request, add_info: dict):
@@ -47,9 +45,27 @@ def fill_docs(request, add_info: dict):
     docs = Document.objects.filter(doc_set_id=doc_set_id)
     
     tags = dict(request.POST.items())
+    if 'access_token' in tags:
+        del tags['access_token']
     
-    ts = time.time()
+    if 'refresh_token' in tags:
+        del tags['refresh_token']
 
+    if add_info['user_id'] is not None:
+        old_tags = get_user_tags(add_info['user_id'])
+        for k, v in tags.items():
+            if k is None or v is None:
+                continue
+            k = k[:255]
+            v = v[:255]
+            if k in old_tags and old_tags[k] != v:
+                UserInfoTags.objects.filter(user_id=add_info['user_id'], param_name=k).delete()
+                del old_tags[k]
+            if k not in old_tags:
+                uit = UserInfoTags(user_id=add_info['user_id'], param_name=k,param_value=v)
+                uit.save()
+
+    ts = time.time()
     response_data = []
     for i, doc in enumerate(docs):
         in_name = os.path.join(STATICFILES_DIRS[0],'tmp_doc',f'{ts}_{i}.docx')
@@ -75,13 +91,7 @@ def get_tags(request, add_info: dict):
     response_data.append('email')
     tags = {}
     if add_info['user_id'] is not None:
-        tmp = UserInfo.objects.filter(user_id=add_info['user_id'])
-        if len(tmp) == 1:
-            user_info = tmp[0]
-            for tag in response_data:
-                value = user_info.get_param(tag)
-                if value is not None:
-                    tags[tag] = value
+        tags = get_user_tags(add_info['user_id'])
      
     return HttpResponse(json.dumps({'tags': response_data, 'filled':tags}), content_type="application/json")
 
