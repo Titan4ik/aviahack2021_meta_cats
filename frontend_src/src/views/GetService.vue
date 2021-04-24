@@ -1,81 +1,85 @@
 <template>
 <div id="get-service">
-    <h1>Некоторая услуга</h1>
-    <p>Описание услуги</p>
-    <div v-if="!isTagsSubmited">
-        <div v-if="docs">
-            <p>Эти данные нужны для заполнения следующих документов:</p>
-            <ul>
-                <li v-for="doc in docs" :key="doc.doc_id">
-                    <a :href="'http://188.120.226.213:8000/static' + doc.path" data-bs-toggle="modal" :data-bs-target="`#empty${doc.doc_id}`">{{ doc.doc_name }}</a>
-                    <div class="modal fade" :id="`empty${doc.doc_id}`" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-xl">
-                            <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">{{ doc.doc_name }}</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <object :data="'http://188.120.226.213:8000/static' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720"></object>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                            </div>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        </div>
-        <h2>Для предоставления услуги необходимы следующие данные</h2>
-        <form v-if="tags" @submit="submitTags">
-            <div v-for="tag in tags" :key="tag" class="form-group">
-                <label class="w-100">
-                    {{ tag }}
-                    <input type="text" class="form-control" :name="tag"  required>
-                </label>
+  <h1>Некоторая услуга №{{ docSetId }}</h1>
+  <p>Описание услуги</p>
+  <div v-if="!isTagsSubmited">
+    <div v-if="docs">
+      <p>Ваши данные нужны для заполнения следующих документов:</p>
+      <ul>
+        <li v-for="doc in docs" :key="doc.doc_id">
+          <a :href="'http://188.120.226.213:8000/static' + doc.path" data-bs-toggle="modal" :data-bs-target="`#empty${doc.doc_id}`">{{ doc.doc_name }}</a>
+          <div class="modal fade" :id="`empty${doc.doc_id}`" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+              <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">{{ doc.doc_name }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <object :data="'http://188.120.226.213:8000/static' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720"></object>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+              </div>
+              </div>
             </div>
-            <button v-if="isTagsSending" class="btn btn-primary btn-block" disabled>Данные отправляются...</button>
-            <button v-else type="submit" class="btn btn-primary btn-block">Отправить</button>
-        </form>
+          </div>
+        </li>
+      </ul>
     </div>
-    <div v-if="!isSignSubmited" :hidden="!isTagsSubmited">
-        <h2>Предварительный вид документов</h2>
-        <div v-if="filledDocs">
-            <p>Вы можете проверить вид документов:</p>
-            <ul>
-                <li v-for="doc in filledDocs" :key="doc.doc_id">
-                    <a :href="'http://188.120.226.213:8000/static' + doc.path" data-bs-toggle="modal" :data-bs-target="`#filled${doc.doc_id}`">{{ doc.doc_name }}</a>
-                    <div class="modal fade" :id="`filled${doc.doc_id}`" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-xl">
-                        <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">{{ doc.doc_name }}</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <object :data="'http://188.120.226.213:8000/static/' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720"></object>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                </li>
-            </ul>
+    <p v-else>Загрузка необходимых документов...</p>
+    <div v-if="tags">
+      <h2>Для предоставления услуги необходимы следующие данные</h2>
+      <form v-if="tags" @submit="submitTags">
+        <div v-for="tag in tags" :key="tag" class="form-group">
+          <label class="w-100">
+            {{ tag }}
+            <input type="text" class="form-control" :name="tag" :value="filled[tag]"  required>
+          </label>
         </div>
-        <h2>Подписать все необходимые документы</h2>
-        <div class="signature_wrapper">
-            <canvas id="signature-pad" class="signature-pad" width=300 height=100></canvas>
-        </div>
-        <div><button type="button" id="clear" class="clear-button" @click="clearSign">Очистить</button></div>
-        <button v-if="isSignSending" class="btn btn-primary btn-block" disabled>Подписываем документы...</button>
-        <button v-else class="btn btn-primary btn-block" @click="sendSign">Подписать</button>
+        <button v-if="isTagsSending" class="btn btn-primary btn-block" disabled>Данные отправляются...</button>
+        <button v-else type="submit" class="btn btn-primary btn-block">Отправить</button>
+      </form>
     </div>
-    <div v-else>
-        <p>Документы успешно подписаны!</p>
+    <p v-else>Загрузка необходимых полей...</p>
+  </div>
+  <div v-if="!isSignSubmited" :hidden="!isTagsSubmited">
+    <h2>Предварительный вид документов</h2>
+    <div v-if="filledDocs">
+      <p>Вы можете проверить вид документов:</p>
+      <ul>
+        <li v-for="doc in filledDocs" :key="doc.doc_id">
+          <a :href="'http://188.120.226.213:8000/static' + doc.path" data-bs-toggle="modal" :data-bs-target="`#filled${doc.doc_id}`">{{ doc.doc_name }}</a>
+          <div class="modal fade" :id="`filled${doc.doc_id}`" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">{{ doc.doc_name }}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <object :data="'http://188.120.226.213:8000/static/' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720"></object>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            </div>
+            </div>
+          </div>
+          </div>
+        </li>
+      </ul>
     </div>
+    <h2>Подписать все необходимые документы</h2>
+    <div class="signature_wrapper">
+      <canvas id="signature-pad" class="signature-pad" width=300 height=100></canvas>
+    </div>
+    <div><button type="button" id="clear" class="clear-button" @click="clearSign">Очистить</button></div>
+    <button v-if="isSignSending" class="btn btn-primary btn-block" disabled>Подписываем документы...</button>
+    <button v-else class="btn btn-primary btn-block" @click="sendSign">Подписать</button>
+  </div>
+  <div v-else>
+    <p>Документы успешно подписаны!</p>
+  </div>
 </div>
 </template>
 
@@ -84,11 +88,13 @@ import api from '@/api/'
 import * as SignaturePad from 'signature_pad';
 
 export default {
+  name: 'GetService',
   data() {
     return {
       canvas: {},
       signaturePad: {},
       tags: false,
+      filled: {},
       docs: false,
       filledDocs: false,
       isTagsSubmited: false,
@@ -98,122 +104,132 @@ export default {
       formData: {}
     }
   },
-  name: 'GetService',
+  props: {
+    docSetId: String
+  },
   components: { },
-    mounted(){
-        this.canvas = document.querySelector("#signature-pad")
-        this.signaturePad = new SignaturePad.default(this.canvas, {
-            penColor: 'rgb(0, 0, 0)'
-        })
-        
-        this.getTags()
-        this.getDocs()
-    },
-    methods:
-    {
-        getTags() {
-            api.getTags(13)
-            .then(async response => {
-                if (response.ok) {
-                    this.tags = await response.json()
-                }
-            })
-        },
-        getDocs() {
-            api.getDocs(13)
-            .then(async response => {
-                if (response.ok) {
-                    this.docs = await response.json()
-                }
-            })
-        },
-        submitTags(event) {
-            event.preventDefault()
-            const formData = new FormData(event.target)
-            this.formData = new FormData(event.target)
-
-            this.isTagsSubmited = false
-            this.isTagsSending = true
-            api.fillDocs(13, formData)
-            .then(async response => {
-                if (response.ok) {
-                    this.filledDocs = await response.json()
-                    this.isTagsSubmited = true
-                }
-            })
-            .finally(() => {
-                this.isTagsSending = false
-            })
-        },
-        clearSign() {
-            this.signaturePad.clear()
-        },
-        sendSign() {
-            this.isSignSubmited = false
-            this.isSignSending = true
-            const formData = this.formData
-            formData.set('el_sign', this.signaturePad.toDataURL())
-
-            api.sendSign(13, formData)
-            .then(async response => {
-                if (response.ok) {
-                    this.isSignSubmited = true
-                }
-            })
-            .finally(() => {
-                this.isSignSending = false
-            })
+  mounted(){
+    this.canvas = document.querySelector("#signature-pad")
+    this.signaturePad = new SignaturePad.default(this.canvas, {
+      penColor: 'rgb(0, 0, 0)'
+    })
+    
+    this.getTags()
+    this.getDocs()
+  },
+  methods:
+  {
+    getTags() {
+      api.getTags(this.docSetId)
+      .then(async response => {
+        if (response.ok) {
+          const data = await response.json()
+          this.tags = data.tags
+          this.filled = data.filled
         }
+      })
+      .catch(() => this.getTags = false)
+    },
+
+    getDocs() {
+      api.getDocs(this.docSetId)
+      .then(async response => {
+        if (response.ok) {
+          this.docs = await response.json()
+        }
+      })
+      .catch(() => this.docs = false)
+    },
+
+    submitTags(event) {
+      event.preventDefault()
+      const formData = new FormData(event.target)
+      this.formData = new FormData(event.target)
+
+      this.isTagsSubmited = false
+      this.isTagsSending = true
+      api.fillDocs(this.docSetId, formData)
+      .then(async response => {
+        if (response.ok) {
+          this.filledDocs = await response.json()
+          this.isTagsSubmited = true
+        }
+      })
+      .finally(() => {
+        this.isTagsSending = false
+      })
+    },
+
+    clearSign() {
+      this.signaturePad.clear()
+    },
+    
+    sendSign() {
+      this.isSignSubmited = false
+      this.isSignSending = true
+      const formData = this.formData
+      formData.set('el_sign', this.signaturePad.toDataURL())
+
+      api.sendSign(this.docSetId, formData)
+      .then(async response => {
+        if (response.ok) {
+          this.isSignSubmited = true
+        }
+      })
+      .finally(() => {
+        this.isSignSending = false
+      })
     }
+  }
 }
 </script>
 <style>
 .btn-block
 {
-    margin: 20px 0;
+  margin: 20px 0;
 }
 .form-group label
 {
-    margin: 15px 0 5px;
+  margin: 15px 0 5px;
 }
 .signature_wrapper
 {
-    position: relative;
-    width: 300px;
-    height: 100px;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    border: #CCC solid 1px;
-    background-image: url(../assets/sign.png); 
-    background-color: #fafafa;
-    margin:20px 0 10px;
+  position: relative;
+  width: 300px;
+  height: 100px;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border: #CCC solid 1px;
+  background-image: url(../assets/sign.png); 
+  background-color: #fafafa;
+  margin:20px 0 10px;
 }
 .signature-pad {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width:300px;
-    height:100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width:300px;
+  height:100px;
 }
 .clear-button
 {
-    color: #00F;
-    background: none;
-    border: none;
-    border-bottom: 2px dashed;
-    padding: 0px;
+  color: #00F;
+  background: none;
+  border: none;
+  border-bottom: 2px dashed;
+  padding: 0px;
 }
 .clear-button:hover
 {
-    color: #F00;
+  color: #F00;
 }
 #accordion
 {
-    margin:20px 0;
+  margin:20px 0;
 }
 #get-service{
-    padding-bottom:30px;
+  padding-bottom:30px;
 }
 </style>

@@ -5,7 +5,7 @@
         <router-link to="/">Подписать документы</router-link> |
         <router-link to="/get-services">Список услуг</router-link> |
         <router-link to="/create-service">Создать услугу</router-link> |
-        <router-link to="/get-service">Получить услугу</router-link> |
+        <router-link to="/get-service/13">Получить услугу</router-link> |
         <router-link to="/login">Войти</router-link>
       </div>
       <div class="col-md-3"></div>
