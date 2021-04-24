@@ -2,11 +2,20 @@
   <div class="container">
     <div id="nav">
       <router-link to="/">Подписать документы</router-link> |
-      <router-link to="/create-service">Создать услугу</router-link>
+      <router-link to="/create-service">Создать услугу</router-link> |
+      <router-link to="/login">Войти</router-link>
     </div>
     <router-view/>
   </div>
 </template>
+
+<script>
+export default {
+  name: 'app',
+  components: {
+  },
+}
+</script>
 
 <style>
 #app {
