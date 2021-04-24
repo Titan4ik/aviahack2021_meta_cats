@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from documents.models import load_tags, Document, DocumentSet, save_tags
 from model_api.auth import login_required
 from users.models import Producer
+from documents import main
 # Create your views here.
 
 def get_docs(request):
@@ -36,16 +37,15 @@ def get_doc(request):
     
 @login_required(strong_auth=False)
 def fill_doc(request, add_info: dict):
-    '''
-        вернет документ, и если указан flg_feel true, то заполнит его
-    '''
     doc_id = request.GET['doc_id']
     doc_set_id = request.GET['doc_set_id']
-    data_from = request.GET['data_from']
     doc = Document.objects.filter(id=id, doc_set_id=doc_set_id)[0]
-    file_data = doc.open_file()
-    # TODO добавить заполнение файла
-    return FileResponse(file_data)
+
+    tags = json.loads(request.body)
+
+    word_data = main.fill_doc(doc, tags)
+
+    return HttpResponse(main.word2html(word_data))
 
 def get_tags(request):
     response_data = load_tags(request.GET['doc_set_id'])
@@ -55,14 +55,13 @@ def get_tags(request):
 
 @login_required(find_producer_id=True)
 def add_docs(request, add_info: dict):
-    file_count = int(request.GET['file_count'])
-    description = request.GET['description']
+    description = request.POST['description']
     doc_set = DocumentSet(description=description,producer_id=add_info['producer_id'])
     doc_set.save()
     doc_set_id = doc_set.id
 
-    for i in range(file_count):
-        file_data = request.FILES[f'file_{i}']
+    for f in request.FILES.getlist('files'):
+        file_data = f
         doc_name=file_data.name
         doc = Document(doc_set_id=doc_set_id, doc_name=doc_name)
         doc.save()
@@ -73,3 +72,4 @@ def add_docs(request, add_info: dict):
 
     response_data = {'doc_set_id': doc_set_id}
     return HttpResponse(json.dumps(response_data), content_type="application/json")
+

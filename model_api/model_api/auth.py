@@ -48,6 +48,8 @@ def sign_in(request, username, password):
 def sign_up(username, password, email):
     user = User.objects.create_user(username=username, email=email, password=password)
     user.save()
+    pro = Producer(user_id=user.id, company_name='meta_cats', confirmed=False)
+    pro.save
 
 def login_required(*,strong_auth=True, find_producer_id=False):
     def wrapper0(func):
