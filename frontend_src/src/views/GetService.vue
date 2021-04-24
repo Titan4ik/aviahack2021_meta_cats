@@ -29,14 +29,10 @@
             <label for="exampleInputEmail1">Email</label>
             <input type="email" class="form-control" id="formEmail1" aria-describedby="emailHelp" placeholder="ivanov@example.com">
         </div>
-        <div class="signature_wrapper">
-            <canvas id="signature-pad" class="signature-pad" width=300 height=100></canvas>
-        </div>
-        <div><button type="button" id="clear" class="clear-button" @click="clearSign">Очистить</button></div>
-        <button type="button" class="btn btn-primary btn-lg btn-block">Заполнить и подписать все документы</button>
+        <button type="button" class="btn btn-primary btn-lg btn-block">Отправить</button>
         
     </form>
-    <h2>Заполненные документы</h2>
+    <h2>Предварительный вид документов</h2>
     <div id="accordion" role="tablist" aria-multiselectable="true">
         <div class="card">
             <div class="card-header" role="tab" id="headingOne">
@@ -69,7 +65,12 @@
     </div>
     <div>
 </div>
-    <button class="btn btn-primary btn-lg btn-block" type="submit">Отправить</button>
+    <h2>Подписать все необходимые документы</h2>
+<div class="signature_wrapper">
+            <canvas id="signature-pad" class="signature-pad" width=300 height=100></canvas>
+        </div>
+        <div><button type="button" id="clear" class="clear-button" @click="clearSign">Очистить</button></div>
+    <button class="btn btn-primary btn-lg btn-block" type="submit">Подписать</button>
   </div>
 </template>
 
@@ -126,7 +127,7 @@ export default {
     border: #CCC solid 1px;
     background-image: url(../assets/sign.png); 
     background-color: #ffffee;
-    margin:30px 0 10px;
+    margin:20px 0 10px;
 
 }
 .signature-pad {
