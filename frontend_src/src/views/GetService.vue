@@ -30,8 +30,9 @@
             <input type="email" class="form-control" id="formEmail1" aria-describedby="emailHelp" placeholder="ivanov@example.com">
         </div>
         <div class="signature_wrapper">
+            <canvas id="signature-pad" class="signature-pad" width=300 height=100></canvas>
         </div>
-        <div><button type="button" class="clear-button">Очистить</button></div>
+        <div><button type="button" id="clear" class="clear-button" @click="clearSign">Очистить</button></div>
         <button type="button" class="btn btn-primary btn-lg btn-block">Заполнить и подписать все документы</button>
         
     </form>
@@ -74,19 +75,32 @@
 
 <script>
 
+import * as SignaturePad from 'signature_pad';
 
 export default {
+  data() {
+    return {
+      canvas: {},
+      signaturePad: {}
+    }
+  },
   name: 'GetService',
   components: { },
-  methods: {
-    undo() {
-      console.log('=== End ===');
-      this.$refs.signaturePad.undoSignature();
+    mounted(){
+        console.log(213412);
+        this.canvas = document.querySelector("#signature-pad");
+        this.signaturePad = new SignaturePad.default(this.canvas, {
+            penColor: 'rgb(0, 0, 0)'
+        });
+        
     },
-    onEnd() {
-      console.log('=== End ===');
+    methods:
+    {
+        clearSign: function () {
+            this.signaturePad.clear();
+        }
+
     }
-  }
 }
 </script>
 <style>
