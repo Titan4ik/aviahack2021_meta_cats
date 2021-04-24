@@ -2,12 +2,51 @@
 <div id="get-service">
     <h1>Некоторая услуга</h1>
     <p>Описание услуги</p>
-    <div v-if="docs">
-        <p>Эти данные нужны для заполнения следующих документов:</p>
-        <ul>
-            <li v-for="doc in docs" :key="doc.doc_id">
-                <a :href="'http://188.120.226.213:8000/static' + doc.path" data-bs-toggle="modal" :data-bs-target="`#empty${doc.doc_id}`">{{ doc.doc_name }}</a>
-                <div class="modal fade" :id="`empty${doc.doc_id}`" tabindex="-1" aria-hidden="true">
+    <div v-if="!isTagsSubmited">
+        <div v-if="docs">
+            <p>Эти данные нужны для заполнения следующих документов:</p>
+            <ul>
+                <li v-for="doc in docs" :key="doc.doc_id">
+                    <a :href="'http://188.120.226.213:8000/static' + doc.path" data-bs-toggle="modal" :data-bs-target="`#empty${doc.doc_id}`">{{ doc.doc_name }}</a>
+                    <div class="modal fade" :id="`empty${doc.doc_id}`" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">{{ doc.doc_name }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <object :data="'http://188.120.226.213:8000/static' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720"></object>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <h2>Для предоставления услуги необходимы следующие данные</h2>
+        <form v-if="tags" @submit="submitTags">
+            <div v-for="tag in tags" :key="tag" class="form-group">
+                <label class="w-100">
+                    {{ tag }}
+                    <input type="text" class="form-control" :name="tag"  required>
+                </label>
+            </div>
+            <button v-if="isTagsSending" class="btn btn-primary btn-block" disabled>Данные отправляются...</button>
+            <button v-else type="submit" class="btn btn-primary btn-block">Отправить</button>
+        </form>
+    </div>
+    <div v-if="!isSignSubmited" :hidden="!isTagsSubmited">
+        <h2>Предварительный вид документов</h2>
+        <div v-if="filledDocs">
+            <p>Вы можете проверить вид документов:</p>
+            <ul>
+                <li v-for="doc in filledDocs" :key="doc.doc_id">
+                    <a :href="'http://188.120.226.213:8000/static' + doc.path" data-bs-toggle="modal" :data-bs-target="`#filled${doc.doc_id}`">{{ doc.doc_name }}</a>
+                    <div class="modal fade" :id="`filled${doc.doc_id}`" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-xl">
                         <div class="modal-content">
                         <div class="modal-header">
@@ -15,60 +54,27 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <object :data="'http://188.120.226.213:8000/static' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720"></object>
+                            <object :data="'http://188.120.226.213:8000/static/' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720"></object>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
                         </div>
                         </div>
                     </div>
-                </div>
-            </li>
-        </ul>
-    </div>
-    <h2>Для предоставления услуги необходимы следующие данные</h2>
-    <form v-if="tags" @submit="submitTags">
-        <div v-for="tag in tags" :key="tag" class="form-group">
-            <label class="w-100">
-                {{ tag }}
-                <input type="text" class="form-control" :name="tag"  required>
-            </label>
+                    </div>
+                </li>
+            </ul>
         </div>
-        <button v-if="isTagsSending" class="btn btn-primary btn-block" disabled>Данные отправляются...</button>
-        <button v-else type="submit" class="btn btn-primary btn-block">Отправить</button>
-    </form>
-    <div :hidden="!isTagsSubmited">
-        <h2>Предварительный вид документов</h2>
-        <div v-if="filledDocs">
-        <p>Вы можете проверить вид документов:</p>
-        <ul>
-            <li v-for="doc in filledDocs" :key="doc.doc_id">
-                <a :href="'http://188.120.226.213:8000/static' + doc.path" data-bs-toggle="modal" :data-bs-target="`#filled${doc.doc_id}`">{{ doc.doc_name }}</a>
-                <div class="modal fade" :id="`filled${doc.doc_id}`" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">{{ doc.doc_name }}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <object :data="'http://188.120.226.213:8000/static/' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720"></object>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                    </div>
-                    </div>
-                </div>
-                </div>
-            </li>
-        </ul>
-    </div>
         <h2>Подписать все необходимые документы</h2>
         <div class="signature_wrapper">
             <canvas id="signature-pad" class="signature-pad" width=300 height=100></canvas>
         </div>
         <div><button type="button" id="clear" class="clear-button" @click="clearSign">Очистить</button></div>
-        <button class="btn btn-primary btn-block" type="submit">Подписать</button>
+        <button v-if="isSignSending" class="btn btn-primary btn-block" disabled>Подписываем документы...</button>
+        <button v-else class="btn btn-primary btn-block" @click="sendSign">Подписать</button>
+    </div>
+    <div v-else>
+        <p>Документы успешно подписаны!</p>
     </div>
 </div>
 </template>
@@ -86,7 +92,10 @@ export default {
       docs: false,
       filledDocs: false,
       isTagsSubmited: false,
-      isTagsSending: false
+      isTagsSending: false,
+      isSignSubmited: false,
+      isSignSending: false,
+      formData: {}
     }
   },
   name: 'GetService',
@@ -121,6 +130,7 @@ export default {
         submitTags(event) {
             event.preventDefault()
             const formData = new FormData(event.target)
+            this.formData = new FormData(event.target)
 
             this.isTagsSubmited = false
             this.isTagsSending = true
@@ -135,8 +145,24 @@ export default {
                 this.isTagsSending = false
             })
         },
-        clearSign: function () {
+        clearSign() {
             this.signaturePad.clear()
+        },
+        sendSign() {
+            this.isSignSubmited = false
+            this.isSignSending = true
+            const formData = this.formData
+            formData.set('el_sign', this.signaturePad.toDataURL())
+
+            api.sendSign(13, formData)
+            .then(async response => {
+                if (response.ok) {
+                    this.isSignSubmited = true
+                }
+            })
+            .finally(() => {
+                this.isSignSending = false
+            })
         }
     }
 }

@@ -63,7 +63,15 @@ const api = {
       body: formData,
       credentials: 'include'
     })
-  }
+  },
+
+  sendSign(docSetId, formData) {
+    return fetch(`http://188.120.226.213:8000/electronic_app/create/?doc_set_id=${docSetId}`, {
+      method: 'POST',
+      body: formData,
+      credentials: 'include'
+    })
+  },
 }
 
 export default api
