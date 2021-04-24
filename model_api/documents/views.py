@@ -108,8 +108,9 @@ def get_tags(request, add_info: dict):
 
 @login_required(find_producer_id=True)
 def add_docs(request, add_info: dict):
+    name = request.POST["name"]
     description = request.POST["description"]
-    doc_set = DocumentSet(description=description, producer_id=add_info["producer_id"])
+    doc_set = DocumentSet(description=description, producer_id=add_info["producer_id"], name=name)
     doc_set.save()
     doc_set_id = doc_set.id
 
