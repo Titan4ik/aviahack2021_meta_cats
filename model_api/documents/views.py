@@ -190,7 +190,7 @@ def create_qr_code(request):
     url = f'http://188.120.226.213:8081/get-service/{doc_set_id}/?' + '&'.join([
         f'{k}={v}'
         for k,v in tags.items()
+        if v
     ])
     
-    img = qrcode.make(url)
-    return FileResponse(img)
+    return HttpResponse(content=main.get_qr_code(url), content_type="image/png")

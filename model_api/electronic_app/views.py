@@ -61,6 +61,7 @@ def create(request, add_info: dict):
         ea.delete()
         for t in ead_docs:
             t.delete()
+        # return HttpResponse(json.dumps({"status": "error", 'msg': str(e)}), content_type="application/json",)
         raise e
 
     return HttpResponse(json.dumps({"status": "ok"}), content_type="application/json",)

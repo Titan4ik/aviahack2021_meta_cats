@@ -8,4 +8,6 @@ urlpatterns = [
     path("add_docs/", views.add_docs, name="add_docs_url"),
     path("get_doc_sets/", views.get_doc_sets, name="get_doc_sets_url"),
     path("get_doc_set_info/", views.get_doc_set_info, name="get_doc_set_info_url"),
+    path("create_qr_code/", views.create_qr_code, name="create_qr_code_url"),
+    
 ]

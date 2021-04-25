@@ -55,10 +55,10 @@ def sign_up(username, password, email):
     user = User.objects.create_user(username=username, email=email, password=password)
     user.save()
     pro = Producer(user_id=user.id, company_name="meta_cats", confirmed=False)
-    pro.save
+    pro.save()
 
 
-def login_required(*, strong_auth=True, find_producer_id=False):
+def login_required(*, strong_auth=True, find_producer_id=False, strong_auth_producer=True):
     def wrapper0(func):
         def wrapper(request):
             add_param = {}
@@ -79,9 +79,14 @@ def login_required(*, strong_auth=True, find_producer_id=False):
                     add_param["user_id"] = None
             if find_producer_id:
                 producer = Producer.objects.filter(user_id=add_param["user_id"])
-                if len(producer) != 1:
-                    raise Exception("Этот метод доступен только заказчикам")
-                add_param["producer_id"] = producer[0].id
+                try:
+                    if len(producer) != 1:
+                        raise Exception("Этот метод доступен только заказчикам")
+                    add_param["producer_id"] = producer[0].id
+                except Exception as e:
+                    if strong_auth_producer:
+                        raise e
+                    add_param["producer_id"] = None
 
             return_value = func(request, add_param)
             return return_value
