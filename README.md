@@ -1,4 +1,10 @@
 # aviahack2021_meta_cats
+
+## Описание
+В директории model_api находятся исходники сервиса api
+
+В директории frontent_src находятся исходники фронтенда
+
 При первом запуске создайте venv
 pip3 install virtualenv
 virtualenv venv
