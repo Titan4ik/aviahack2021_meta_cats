@@ -56,6 +56,7 @@ export default {
           console.log(tokens)
           localStorage.setItem('access_token', tokens.access_token)
           localStorage.setItem('refresh_token', tokens.refresh_token)
+          this.checkProducer()
         } else {
           this.error = 'Не удалось авторизоваться: ' + response.status
         }
@@ -63,7 +64,14 @@ export default {
       .catch(error => {
         this.error = 'Не удалось авторизоваться: ' + error
       })
-    }
+    },
+
+    checkProducer() {
+      api.isProducer()
+      .then((result) => {
+        store.isProducer = result
+      })
+    },
   }
 }
 </script>

@@ -1,5 +1,6 @@
 import Vue from "vue";
 
 export default Vue.observable({
-  isLogin: false
+  isLogin: false,
+  isProducer: false
 })

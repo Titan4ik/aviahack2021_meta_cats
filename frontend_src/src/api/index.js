@@ -109,6 +109,19 @@ const api = {
     })).ok
   },
 
+  async isProducer() {
+    return (await fetch('http://188.120.226.213:8000/users/test_sign_producer/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        access_token: localStorage.getItem('access_token'),
+        refresh_token: localStorage.getItem('refresh_token'),
+      })
+    })).ok
+  },
+
   getProducerOffers() {
     return fetch('http://188.120.226.213:8000/users/get_producer_offers/', {
       method: 'POST',
