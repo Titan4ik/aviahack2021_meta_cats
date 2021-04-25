@@ -1,13 +1,28 @@
-from django.urls import path
-from . import views
+from django.db import models
 
-urlpatterns = [
-    path("sign_in/", views.sign_in, name="sign_in_url"),
-    path("sign_up/", views.sign_up, name="sign_up_url"),
-    path("logout/", views.logout, name="logout_url"),
-    path("test_sign_user/", views.test_sign_user, name="test_sign_user_url"),
-    path(
-        "test_sign_producer/", views.test_sign_producer, name="test_sign_producer_url"
-    ),
-    path('get_producer_offers/', views.get_producer_offers, name='get_producer_offers_url')
-]
+# Create your models here.
+class Producer(models.Model):
+    id = models.AutoField
+    user_id = models.IntegerField()
+    company_name = models.CharField(max_length=128)
+    confirmed = models.BooleanField(default=False)
+
+
+class UserInfoTags(models.Model):
+    class Meta:
+        unique_together = (("user_id", "param_name"),)
+
+    user_id = models.IntegerField()
+    param_name = models.CharField(max_length=256)
+    param_value = models.CharField(max_length=256)
+
+
+def get_user_tags(user_id):
+    tags = UserInfoTags.objects.filter(user_id=user_id)
+    return {tag.param_name: tag.param_value for tag in tags}
+
+
+class AuthTokens(models.Model):
+    user_id = models.IntegerField()
+    access_token = models.CharField(max_length=256)
+    refresh_token = models.CharField(max_length=256)

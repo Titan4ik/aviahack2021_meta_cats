@@ -9,4 +9,5 @@ urlpatterns = [
     path(
         "test_sign_producer/", views.test_sign_producer, name="test_sign_producer_url"
     ),
+    path('get_producer_offers/', views.get_producer_offers, name='get_producer_offers_url')
 ]
