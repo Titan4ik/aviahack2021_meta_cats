@@ -114,22 +114,29 @@ def add_docs(request, add_info: dict):
     doc_set.save()
     doc_set_id = doc_set.id
 
+    docs = []
     tags = []
-    for file_data in request.FILES.getlist("files"):
-        doc_name = file_data.name
-        doc = Document(doc_set_id=doc_set_id, doc_name=doc_name)
-        doc.save()
-        filename, file_extension = os.path.splitext(doc_name)
-        doc.save_file(file_data.read())
+    try:
+        for file_data in request.FILES.getlist("files"):
+            doc_name = file_data.name
+            doc = Document(doc_set_id=doc_set_id, doc_name=doc_name)
+            doc.save()
+            filename, file_extension = os.path.splitext(doc_name)
+            doc.save_file(file_data.read())
 
-        filename, file_extension = os.path.splitext(doc.get_path())
-        out_name = f"{filename}.pdf"
-        main.word2pdf(doc.get_path(), os.path.dirname(out_name))
+            filename, file_extension = os.path.splitext(doc.get_path())
+            out_name = f"{filename}.pdf"
+            main.word2pdf(doc.get_path(), os.path.dirname(out_name))
+            
+            tags_in_docx = DocxTemplate(doc.get_path()).get_undeclared_template_variables()
+            tags += tags_in_docx
 
-        tags_in_docx = DocxTemplate(doc.get_path()).get_undeclared_template_variables()
-        tags += tags_in_docx
-    save_tags(doc_set_id, list(set(tags)))
-
+        save_tags(doc_set_id, list(set(tags)))
+    except Exception as e:
+        doc_set.delete()
+        for doc in docs:
+            doc.delete()
+        raise e
     # response_data = {"doc_set_id": doc_set_id}
     # return HttpResponse(json.dumps(response_data), content_type="application/json")
 

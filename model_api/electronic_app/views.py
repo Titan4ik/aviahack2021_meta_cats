@@ -23,39 +23,45 @@ def create(request, add_info: dict):
     tags = dict(request.POST.items())
     ea = ElectronicApplication(doc_set_id=doc_set_id, consumer_id=add_info["user_id"])
     ea.save()
-
-    image_path = os.path.join(
-        STATICFILES_DIRS[0], "electronic_application", f"{ea.id}", "подпись.png"
-    )
-    path = os.path.dirname(image_path)
+    ead_docs = []
     try:
-        os.mkdir(path)
-    except OSError:
-        ...
-    with open(image_path, "wb") as f:
-        f.write(decodestring(imagestr.encode()))
+        image_path = os.path.join(
+            STATICFILES_DIRS[0], "electronic_application", f"{ea.id}", "подпись.png"
+        )
+        path = os.path.dirname(image_path)
+        try:
+            os.mkdir(path)
+        except OSError:
+            ...
+        with open(image_path, "wb") as f:
+            f.write(decodestring(imagestr.encode()))
 
-    files = []
+        files = []
 
-    for i, doc in enumerate(docs):
-        ead = ElectronicApplicationDocument(app_id=ea.id, file_name=doc.get_name())
-        ead.save()
+        for i, doc in enumerate(docs):
+            ead = ElectronicApplicationDocument(app_id=ea.id, file_name=doc.get_name())
+            ead.save()
+            ead_docs.append(ead)
+            in_name = ead.get_path()
 
-        in_name = ead.get_path()
+            word_data = main.fill_doc(doc, in_name, tags, image_path)
+            out_name = os.path.dirname(in_name)
+            main.word2pdf(in_name, out_name)
+            doc_name, _ = os.path.splitext(in_name)
 
-        word_data = main.fill_doc(doc, in_name, tags, image_path)
-        out_name = os.path.dirname(in_name)
-        main.word2pdf(in_name, out_name)
-        doc_name, _ = os.path.splitext(in_name)
+            files.append(f"{doc_name}.pdf")
 
-        files.append(f"{doc_name}.pdf")
+        doc_set = DocumentSet.objects.filter(id=doc_set_id)[0]
+        producer = Producer.objects.filter(id=doc_set.producer_id)[0]
+        email_producer = User.objects.filter(id=producer.user_id)[0].email
+        email_user = tags["email"]
 
-    doc_set = DocumentSet.objects.filter(id=doc_set_id)[0]
-    producer = Producer.objects.filter(id=doc_set.producer_id)[0]
-    email_producer = User.objects.filter(id=producer.user_id)[0].email
-    email_user = tags["email"]
-
-    send_mails(email_user, email_producer, files, f'Услуга №{doc_set_id}. {doc_set.name}')
+        send_mails(email_user, email_producer, files, f'Услуга №{doc_set_id}. {doc_set.name}')
+    except Exception as e:
+        ea.delete()
+        for t in ead_docs:
+            t.delete()
+        raise e
 
     return HttpResponse(json.dumps({"status": "ok"}), content_type="application/json",)
 
