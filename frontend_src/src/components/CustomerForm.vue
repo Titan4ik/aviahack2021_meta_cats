@@ -22,9 +22,13 @@
           <input class="form-control" type="file" name="files" multiple accept=".doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
         </label>
       </div>
-      <p v-if="isSending">sending...</p>
+      <button v-if="isSending" class="btn btn-primary btn-block" disabled>Создаем услугу...</button>
       <button v-else type="submit" class="btn btn-primary">Отправить</button>
       <p v-if="error">{{ error }}</p>
+      <div v-if="qrCode" class="answer">
+        <p>Ваш QR код:</p>
+        <img class="mt-3 mw-100" :src="qrCode" alt="">
+      </div>
     </form>
   </div>
 </template>
@@ -41,6 +45,7 @@ export default {
     return {
       isSending: false,
       error: false,
+      qrCode: false,
       access_token: localStorage.getItem('access_token'),
       refresh_token: localStorage.getItem('refresh_token')
     }
@@ -58,17 +63,17 @@ export default {
       this.isSending = true
 
       api.addDocs(formData)
-      .then(response => {
+      .then(async response => {
         if (response.ok) {
-          this.error = 'Документы отправлены'
+          this.qrCode = await response.text()
         } else {
           this.error = 'response error: ' + response.status
         }
-        this.isSending = false;
+        this.isSending = false
       })
       .catch(error => {
         this.error = 'response error: ' + error
-        this.isSending = false;
+        this.isSending = false
       })
     }
   }
@@ -87,8 +92,13 @@ li {
   display: inline-block;
   margin: 0 10px;
 }
-a {
-  color: #42b983;
+.answer {
+  margin-top: 30px;
+}
+
+.answer p {
+  margin-top: 20px;
+  margin-bottom: 10px;
 }
 
 </style>

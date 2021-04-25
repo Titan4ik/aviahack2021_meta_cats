@@ -1,6 +1,6 @@
 <template>
 <div id="get-services">
-    <h1>Список услуг</h1>
+    <h1 class="text-center mb-5">Список услуг</h1>
     <div v-if="docSets">
       <div v-for="docSet in docSets" :key="docSet.producer_name">
         <h2>{{ docSet.producer_name }}</h2>
