@@ -9,7 +9,7 @@
             <div class="d-inline-block">
               <router-link :to="`get-service/${offer.id}`">{{ offer.name }}</router-link>
             </div>
-            <div class="gear d-inline-block" v-if="producerOffers.has(offer.id)" >
+            <div class="gear d-inline-block" v-if="producerOffers && producerOffers.has(offer.id)" >
               <router-link to="" title="Редактировать QR">⚙</router-link>
             </div>
           </li>
