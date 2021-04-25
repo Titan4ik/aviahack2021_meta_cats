@@ -49,7 +49,7 @@ export default {
       },
 
       getProducerOffers() {
-        api.testSignProducer()
+        api.getProducerOffers()
         .then(async response => {
           if (response.ok) {
             this.producerOffers = new Set((await response.json()).offers.map((offer) => offer.id))

@@ -109,8 +109,8 @@ const api = {
     })).ok
   },
 
-  testSignProducer() {
-    return fetch('http://188.120.226.213:8000/users/test_sign_producer/', {
+  getProducerOffers() {
+    return fetch('http://188.120.226.213:8000/users/get_producer_offers/', {
       method: 'POST',
       body: JSON.stringify({
         access_token: localStorage.getItem('access_token'),
