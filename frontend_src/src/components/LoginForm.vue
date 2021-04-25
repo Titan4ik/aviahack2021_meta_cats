@@ -11,7 +11,8 @@
           <label for="exampleInputPassword1" class="form-label">Пароль</label>
           <input type="password" name="password" class="form-control" id="exampleInputPassword1">
         </div>
-        <button type="submit" class="btn btn-primary">Войти</button>
+        <button v-if="isLoginSending" class="btn btn-primary" disabled>Производим авторизацию...</button>
+        <button v-else type="submit" class="btn btn-primary">Войти</button>
       </form>
       <p v-if="error">{{ error }}</p>
     </div>
@@ -28,7 +29,8 @@ export default {
 
   data() {
     return {
-      error: false
+      error: false,
+      isLoginSending: false
     }
   },
 
@@ -47,22 +49,26 @@ export default {
 
       const formData = new FormData(event.target)
 
+      this.isLoginSending = true
       api.signIn(formData)
       .then(async response => {
         if (response.ok) {
           store.isLogin = true
           this.error = false
           const tokens = await response.json()
-          console.log(tokens)
           localStorage.setItem('access_token', tokens.access_token)
           localStorage.setItem('refresh_token', tokens.refresh_token)
           this.checkProducer()
+          this.$router.push('get-services')
         } else {
           this.error = 'Не удалось авторизоваться: ' + response.status
         }
       })
       .catch(error => {
         this.error = 'Не удалось авторизоваться: ' + error
+      })
+      .finally(() => {
+        this.isLoginSending = false
       })
     },
 
