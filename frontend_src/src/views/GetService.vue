@@ -3,14 +3,55 @@
   <div v-if="docSetInfo">
     <h1>{{ docSetInfo.name }}</h1>
     <p>{{ docSetInfo.description }}</p>
-  </div>
-  <div v-if="!isTagsSubmited">
-    <div v-if="docs">
-      <p>Ваши данные нужны для заполнения следующих документов:</p>
-      <ul>
-        <li v-for="doc in docs" :key="doc.doc_id">
-          <a :href="'http://188.120.226.213:8000/static' + doc.path" data-bs-toggle="modal" :data-bs-target="`#empty${doc.doc_id}`">{{ doc.doc_name }}</a>
-          <div class="modal fade" :id="`empty${doc.doc_id}`" tabindex="-1" aria-hidden="true">
+    <div v-if="!isTagsSubmited">
+      <div v-if="docs">
+        <p>Ваши данные нужны для заполнения следующих документов:</p>
+        <ul>
+          <li v-for="doc in docs" :key="doc.doc_id">
+            <a :href="'http://188.120.226.213:8000/static' + doc.path" data-bs-toggle="modal" :data-bs-target="`#empty${doc.doc_id}`">{{ doc.doc_name }}</a>
+            <div class="modal fade" :id="`empty${doc.doc_id}`" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">{{ doc.doc_name }}</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <object :data="'http://188.120.226.213:8000/static' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720"></object>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                </div>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <p v-else>Загрузка необходимых документов...</p>
+      <div v-if="tags">
+        <h2>Для предоставления услуги необходимы следующие данные</h2>
+        <form v-if="tags" @submit="submitTags">
+          <div v-for="tag in tags" :key="tag" class="form-group">
+            <label class="w-100">
+              {{ tag }}
+              <input type="text" class="form-control" :name="tag" :value="$route.query[tag] || filled[tag]"  required>
+            </label>
+          </div>
+          <button v-if="isTagsSending" class="btn btn-primary btn-block" disabled>Данные отправляются...</button>
+          <button v-else type="submit" class="btn btn-primary btn-block">Отправить</button>
+        </form>
+      </div>
+      <p v-else>Загрузка необходимых полей...</p>
+    </div>
+    <div v-if="!isSignSubmited" :hidden="!isTagsSubmited">
+      <h2>Предварительный вид документов</h2>
+      <div v-if="filledDocs">
+        <p>Вы можете проверить вид документов:</p>
+        <ul>
+          <li v-for="doc in filledDocs" :key="doc.doc_id">
+            <a :href="'http://188.120.226.213:8000/static' + doc.path" data-bs-toggle="modal" :data-bs-target="`#filled${doc.doc_id}`">{{ doc.doc_name }}</a>
+            <div class="modal fade" :id="`filled${doc.doc_id}`" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-xl">
               <div class="modal-content">
               <div class="modal-header">
@@ -18,70 +59,30 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <object :data="'http://188.120.226.213:8000/static' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720"></object>
+                <object :data="'http://188.120.226.213:8000/static/' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720"></object>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
               </div>
               </div>
             </div>
-          </div>
-        </li>
-      </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <h2>Подписать все необходимые документы</h2>
+      <div class="signature_wrapper">
+        <canvas ref="signaturePad" id="signature-pad" class="signature-pad" width=300 height=100></canvas>
+      </div>
+      <div><button type="button" id="clear" class="clear-button" @click="clearSign">Очистить</button></div>
+      <button v-if="isSignSending" class="btn btn-primary btn-block" disabled>Подписываем документы...</button>
+      <button v-else class="btn btn-primary btn-block" @click="sendSign">Подписать</button>
     </div>
-    <p v-else>Загрузка необходимых документов...</p>
-    <div v-if="tags">
-      <h2>Для предоставления услуги необходимы следующие данные</h2>
-      <form v-if="tags" @submit="submitTags">
-        <div v-for="tag in tags" :key="tag" class="form-group">
-          <label class="w-100">
-            {{ tag }}
-            <input type="text" class="form-control" :name="tag" :value="$route.query[tag] || filled[tag]"  required>
-          </label>
-        </div>
-        <button v-if="isTagsSending" class="btn btn-primary btn-block" disabled>Данные отправляются...</button>
-        <button v-else type="submit" class="btn btn-primary btn-block">Отправить</button>
-      </form>
+    <div v-else>
+      <p>Документы успешно подписаны!</p>
     </div>
-    <p v-else>Загрузка необходимых полей...</p>
   </div>
-  <div v-if="!isSignSubmited" :hidden="!isTagsSubmited">
-    <h2>Предварительный вид документов</h2>
-    <div v-if="filledDocs">
-      <p>Вы можете проверить вид документов:</p>
-      <ul>
-        <li v-for="doc in filledDocs" :key="doc.doc_id">
-          <a :href="'http://188.120.226.213:8000/static' + doc.path" data-bs-toggle="modal" :data-bs-target="`#filled${doc.doc_id}`">{{ doc.doc_name }}</a>
-          <div class="modal fade" :id="`filled${doc.doc_id}`" tabindex="-1" aria-hidden="true">
-          <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">{{ doc.doc_name }}</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <object :data="'http://188.120.226.213:8000/static/' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720"></object>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-            </div>
-            </div>
-          </div>
-          </div>
-        </li>
-      </ul>
-    </div>
-    <h2>Подписать все необходимые документы</h2>
-    <div class="signature_wrapper">
-      <canvas id="signature-pad" class="signature-pad" width=300 height=100></canvas>
-    </div>
-    <div><button type="button" id="clear" class="clear-button" @click="clearSign">Очистить</button></div>
-    <button v-if="isSignSending" class="btn btn-primary btn-block" disabled>Подписываем документы...</button>
-    <button v-else class="btn btn-primary btn-block" @click="sendSign">Подписать</button>
-  </div>
-  <div v-else>
-    <p>Документы успешно подписаны!</p>
-  </div>
+  <p v-else>Загружаем услугу...</p>
 </div>
 </template>
 
@@ -112,14 +113,20 @@ export default {
   },
   components: { },
   mounted(){
-    this.canvas = document.querySelector("#signature-pad")
-    this.signaturePad = new SignaturePad.default(this.canvas, {
-      penColor: 'rgb(0, 0, 0)'
-    })
-    
     this.getDocSetInfo()
     this.getTags()
     this.getDocs()
+  },
+  updated() {
+    this.$nextTick()
+    .then(() => {
+      if ((Object.keys(this.signaturePad).length == 0) && this.isTagsSubmited) {
+        this.canvas = this.$refs.signaturePad
+        this.signaturePad = new SignaturePad.default(this.canvas, {
+          penColor: 'rgb(0, 0, 0)'
+        })
+      }
+    })
   },
   methods:
   {
@@ -198,6 +205,10 @@ export default {
 }
 </script>
 <style>
+* {
+  word-wrap: break-word!important;
+  word-break: break-word!important;
+}
 .btn-block
 {
   margin: 20px 0;

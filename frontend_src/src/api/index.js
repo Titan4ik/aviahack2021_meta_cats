@@ -109,6 +109,16 @@ const api = {
     })).ok
   },
 
+  testSignProducer() {
+    return fetch('http://188.120.226.213:8000/users/test_sign_producer/', {
+      method: 'POST',
+      body: JSON.stringify({
+        access_token: localStorage.getItem('access_token'),
+        refresh_token: localStorage.getItem('refresh_token'),
+      })
+    })
+  },
+
   logout() {
     fetch('http://188.120.226.213:8000/users/logout/', {
       method: 'POST',

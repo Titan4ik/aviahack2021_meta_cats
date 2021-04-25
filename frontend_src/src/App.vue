@@ -3,7 +3,7 @@
     <div class="row">
       <div id="nav">
         <router-link to="/get-services">Список услуг</router-link> |
-        <router-link to="/create-service">Создать услугу</router-link> |
+        <span v-if="isLogin"><router-link to="/create-service">Создать услугу</router-link> |</span>
         <router-link v-if="!isLogin" to="/login">Войти</router-link>
         <a v-else @click="exit">Выйти</a>
       </div>
