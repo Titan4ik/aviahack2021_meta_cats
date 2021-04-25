@@ -31,6 +31,7 @@
       <p v-else>Загрузка необходимых документов...</p>
       <div v-if="tags">
         <h2>Для предоставления услуги необходимы следующие данные</h2>
+        <p v-if="error">{{ error }}</p>
         <form v-if="tags" @submit="submitTags">
           <div v-for="tag in tags" :key="tag" class="form-group">
             <label class="w-100">
@@ -105,6 +106,7 @@ export default {
       isTagsSending: false,
       isSignSubmited: false,
       isSignSending: false,
+      error: false,
       formData: {}
     }
   },
@@ -157,9 +159,10 @@ export default {
       .then(async response => {
         if (response.ok) {
           this.docs = await response.json()
+        } else {
+          this.docs = false
         }
       })
-      .catch(() => this.docs = false)
     },
 
     submitTags(event) {
@@ -174,6 +177,9 @@ export default {
         if (response.ok) {
           this.filledDocs = await response.json()
           this.isTagsSubmited = true
+          this.error = false
+        } else {
+          this.error = 'Ошибка, статус: ' + response.status
         }
       })
       .finally(() => {
@@ -195,6 +201,10 @@ export default {
       .then(async response => {
         if (response.ok) {
           this.isSignSubmited = true
+          this.error = false
+        } else {
+          this.isTagsSubmited = false
+          this.error = 'Ошибка, статус: ' + response.status
         }
       })
       .finally(() => {

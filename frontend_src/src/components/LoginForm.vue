@@ -5,7 +5,7 @@
       <form v-else v-on:submit="submit">
         <div class="mb-3">
           <label for="exampleInputEmail1" class="form-label">Логин</label>
-          <input type="text" name="username" class="form-control" id="exampleInputEmail1">
+          <input type="text" name="username" class="form-control" id="exampleInputEmail1" v-model="login">
         </div>
         <div class="mb-3">
           <label for="exampleInputPassword1" class="form-label">Пароль</label>
@@ -37,6 +37,24 @@ export default {
   computed: {
     isLogin() {
       return store.isLogin
+    },
+    login: {
+      get() {
+        return store.login
+      },
+      set(value) {
+        localStorage.setItem('login', value)
+        store.login = value
+      }
+    },
+    producerName: {
+      get() {
+        return store.producerName
+      },
+      set(value) {
+        localStorage.setItem('producerName', value)
+        store.producerName = value
+      }
     }
   },
 
@@ -73,9 +91,15 @@ export default {
     },
 
     checkProducer() {
-      api.isProducer()
-      .then((result) => {
-        store.isProducer = result
+      api.testProducer()
+      .then(async (response) => {
+        if (response.ok) {
+          const data = await response.json()
+          store.isProducer = true
+          this.producerName = data.name
+        } else {
+          store.isProducer = false
+        }
       })
     },
   }
