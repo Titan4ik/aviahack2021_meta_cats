@@ -130,8 +130,13 @@ def add_docs(request, add_info: dict):
         tags += tags_in_docx
     save_tags(doc_set_id, list(set(tags)))
 
-    response_data = {"doc_set_id": doc_set_id}
-    return HttpResponse(json.dumps(response_data), content_type="application/json")
+    # response_data = {"doc_set_id": doc_set_id}
+    # return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+    url = f'http://188.120.226.213:8081/get-service/{doc_set_id}/'
+    
+    return HttpResponse(content=main.get_qr_code(url), content_type="image/png")
+
 
 
 def get_doc_sets(request):
@@ -166,3 +171,19 @@ def get_doc_set_info(request):
         content_type="application/json",
     )
 
+def create_qr_code(request):
+    doc_set_id = request.GET["doc_set_id"]
+    tags = dict(request.POST.items())
+    if "access_token" in tags:
+        del tags["access_token"]
+
+    if "refresh_token" in tags:
+        del tags["refresh_token"]
+
+    url = f'http://188.120.226.213:8081/get-service/{doc_set_id}/?' + '&'.join([
+        f'{k}={v}'
+        for k,v in tags.items()
+    ])
+    
+    img = qrcode.make(url)
+    return FileResponse(img)
