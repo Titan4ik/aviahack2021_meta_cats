@@ -3,7 +3,7 @@
     <div class="row">
       <div id="nav">
         <router-link to="/get-services">Список услуг</router-link> |
-        <router-link to="/create-service">Создать услугу</router-link> |
+        <span v-if="isLogin && isProducer"><router-link to="/create-service">Создать услугу</router-link> |</span>
         <router-link v-if="!isLogin" to="/login">Войти</router-link>
         <a v-else @click="exit">Выйти</a>
       </div>
@@ -31,11 +31,16 @@ export default {
 
   mounted() {
     this.checkLogin()
+    this.checkProducer()
   },
 
   computed: {
     isLogin() {
       return store.isLogin
+    },
+
+    isProducer() {
+      return store.isProducer
     }
   },
 
@@ -46,6 +51,14 @@ export default {
         store.isLogin = result
       })
     },
+
+    checkProducer() {
+      api.isProducer()
+      .then((result) => {
+        store.isProducer = result
+      })
+    },
+
     exit() {
       api.logout()
       store.isLogin = false

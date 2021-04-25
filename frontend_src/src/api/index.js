@@ -36,6 +36,14 @@ const api = {
     })
   },
 
+  createQrCode(docSetId, formData) {
+    return fetch('http://188.120.226.213:8000/documents/create_qr_code/?doc_set_id=' + docSetId, {
+      method: 'POST',
+      body: formData,
+      credentials: 'include'
+    })
+  },
+
   getTags(docSetId) {
     return fetch('http://188.120.226.213:8000/documents/get_tags/?doc_set_id=' + docSetId, {
       method: 'POST',
@@ -107,6 +115,29 @@ const api = {
         refresh_token: localStorage.getItem('refresh_token'),
       })
     })).ok
+  },
+
+  async isProducer() {
+    return (await fetch('http://188.120.226.213:8000/users/test_sign_producer/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        access_token: localStorage.getItem('access_token'),
+        refresh_token: localStorage.getItem('refresh_token'),
+      })
+    })).ok
+  },
+
+  getProducerOffers() {
+    return fetch('http://188.120.226.213:8000/users/get_producer_offers/', {
+      method: 'POST',
+      body: JSON.stringify({
+        access_token: localStorage.getItem('access_token'),
+        refresh_token: localStorage.getItem('refresh_token'),
+      })
+    })
   },
 
   logout() {

@@ -5,8 +5,13 @@
       <div v-for="docSet in docSets" :key="docSet.producer_name">
         <h2>{{ docSet.producer_name }}</h2>
         <ul v-if="docSet.offers" class="list-group">
-          <li v-for="offer in docSet.offers" :key="offer.offer_id" class="list-group-item">
-            <a :href="`get-service/${offer.id}`">{{ offer.name }}</a>
+          <li v-for="offer in docSet.offers" :key="offer.offer_id" class="list-group-item d-flex">
+            <div class="d-inline-block">
+              <router-link :to="`get-service/${offer.id}`">{{ offer.name }}</router-link>
+            </div>
+            <div class="gear d-inline-block" v-if="producerOffers && producerOffers.has(offer.id)" >
+              <router-link :to="`create-qr-code/${offer.id}`" title="Редактировать QR">⚙</router-link>
+            </div>
           </li>
         </ul>
         <p v-else>У этого постовщика пока нет услуг</p>
@@ -20,20 +25,34 @@
 import api from '@/api/'
 export default {
     name: 'GetServices',
+
     data() {
       return {
-        docSets: false
+        docSets: false,
+        producerOffers: false
       }
     },
+
     mounted() {
-      this.getDocSets()
+      this.getDocSets(),
+      this.getProducerOffers()
     },
+
     methods: {
       getDocSets() {
         api.getDocSets()
         .then(async response => {
           if (response.ok) {
             this.docSets = await response.json()
+          }
+        })
+      },
+
+      getProducerOffers() {
+        api.getProducerOffers()
+        .then(async response => {
+          if (response.ok) {
+            this.producerOffers = new Set((await response.json()).offers.map((offer) => offer.id))
           }
         })
       }
@@ -44,5 +63,12 @@ export default {
 <style >
 h2 {
     margin-top:15px;
+}
+.gear {
+  margin-left: auto;
+}
+
+.gear > a {
+  text-decoration: none;
 }
 </style>
