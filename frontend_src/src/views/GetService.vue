@@ -88,7 +88,7 @@
 
 <script>
 import api from '@/api/'
-import * as SignaturePad from 'signature_pad';
+import * as SignaturePad from 'signature_pad'
 
 export default {
   name: 'GetService',

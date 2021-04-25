@@ -36,6 +36,14 @@ const api = {
     })
   },
 
+  createQrCode(docSetId, formData) {
+    return fetch('http://188.120.226.213:8000/documents/create_qr_code/?doc_set_id=' + docSetId, {
+      method: 'POST',
+      body: formData,
+      credentials: 'include'
+    })
+  },
+
   getTags(docSetId) {
     return fetch('http://188.120.226.213:8000/documents/get_tags/?doc_set_id=' + docSetId, {
       method: 'POST',

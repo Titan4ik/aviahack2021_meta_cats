@@ -32,6 +32,13 @@ const routes = [
         name: 'GetServices',
         component: () =>
             import ('../views/GetServices.vue')
+    },
+    {
+        path: '/create-qr-code/:docSetId',
+        name: 'CreateQrCode',
+        component: () =>
+            import ('../views/CreateQrCode.vue'),
+        props: true
     }
 ]
 
