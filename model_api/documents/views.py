@@ -95,7 +95,8 @@ def get_tags(request, add_info: dict):
     response_data = load_tags(request.GET["doc_set_id"])
     if "подпись" in response_data:
         response_data.remove("подпись")
-    response_data.append("email")
+    if "email" not in response_data:
+        response_data.append("email")
     tags = {}
     if add_info["user_id"] is not None:
         tags = get_user_tags(add_info["user_id"])
