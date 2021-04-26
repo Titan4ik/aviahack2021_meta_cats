@@ -1,6 +1,8 @@
 const api = {
+  url: 'http://188.120.226.213:8000/',
+
   personal() {
-    return fetch('http://188.120.226.213:8000/user_part/personal/', {
+    return fetch(this.url + 'user_part/personal/', {
       method: "POST",
       headers: {
         'Content-Type': 'application/json'
@@ -13,7 +15,7 @@ const api = {
   },
 
   setFile(formData) {
-    return fetch('http://188.120.226.213:8000/user_part/set_file/', {
+    return fetch(this.url + 'user_part/set_file/', {
       method: 'POST',
       body: formData,
       credentials: 'include'
@@ -21,7 +23,7 @@ const api = {
   },
 
   signIn(formData) {
-    return fetch('http://188.120.226.213:8000/users/sign_in/', {
+    return fetch(this.url + 'users/sign_in/', {
       method: 'POST',
       body: formData,
       credentials: 'include'
@@ -29,7 +31,7 @@ const api = {
   },
 
   addDocs(formData) {
-    return fetch('http://188.120.226.213:8000/documents/add_docs/', {
+    return fetch(this.url + 'documents/add_docs/', {
       method: 'POST',
       body: formData,
       credentials: 'include'
@@ -37,7 +39,7 @@ const api = {
   },
 
   createQrCode(docSetId, formData) {
-    return fetch('http://188.120.226.213:8000/documents/create_qr_code/?doc_set_id=' + docSetId, {
+    return fetch(this.url + 'documents/create_qr_code/?doc_set_id=' + docSetId, {
       method: 'POST',
       body: formData,
       credentials: 'include'
@@ -45,7 +47,7 @@ const api = {
   },
 
   getTags(docSetId) {
-    return fetch('http://188.120.226.213:8000/documents/get_tags/?doc_set_id=' + docSetId, {
+    return fetch(this.url + 'documents/get_tags/?doc_set_id=' + docSetId, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -59,21 +61,21 @@ const api = {
   },
 
   getDocs(docSetId) {
-    return fetch('http://188.120.226.213:8000/documents/get_docs/?doc_set_id=' + docSetId, {
+    return fetch(this.url + 'documents/get_docs/?doc_set_id=' + docSetId, {
       method: 'GET',
       credentials: 'include'
     })
   },
 
   getDoc(docSetId, docId) {
-    return fetch(`http://188.120.226.213:8000/documents/get_doc/?doc_set_id=${docSetId}&doc_id=${docId}`, {
+    return fetch(`${this.url}documents/get_doc/?doc_set_id=${docSetId}&doc_id=${docId}`, {
       method: 'GET',
       credentials: 'include'
     })
   },
 
   getDocSetInfo(docSetId) {
-    return fetch(`http://188.120.226.213:8000/documents/get_doc_set_info/?doc_set_id=${docSetId}`, {
+    return fetch(`${this.url}documents/get_doc_set_info/?doc_set_id=${docSetId}`, {
       method: 'GET',
       credentials: 'include'
     })
@@ -82,7 +84,7 @@ const api = {
   fillDocs(docSetId, formData) {
     formData.set('access_token', localStorage.getItem('access_token'))
     formData.set('refresh_token', localStorage.getItem('refresh_token'))
-    return fetch(`http://188.120.226.213:8000/documents/fill_docs/?doc_set_id=${docSetId}`, {
+    return fetch(`${this.url}documents/fill_docs/?doc_set_id=${docSetId}`, {
       method: 'POST',
       body: formData,
       credentials: 'include'
@@ -90,7 +92,7 @@ const api = {
   },
 
   sendSign(docSetId, formData) {
-    return fetch(`http://188.120.226.213:8000/electronic_app/create/?doc_set_id=${docSetId}`, {
+    return fetch(`${this.url}electronic_app/create/?doc_set_id=${docSetId}`, {
       method: 'POST',
       body: formData,
       credentials: 'include'
@@ -98,14 +100,14 @@ const api = {
   },
 
   getDocSets() {
-    return fetch('http://188.120.226.213:8000/documents/get_doc_sets/', {
+    return fetch(this.url + 'documents/get_doc_sets/', {
       method: 'GET',
       credentials: 'include'
     })
   },
 
   async isLogin() {
-    return (await fetch('http://188.120.226.213:8000/users/test_sign_user/', {
+    return (await fetch(this.url + 'users/test_sign_user/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -118,7 +120,7 @@ const api = {
   },
 
   testProducer() {
-    return fetch('http://188.120.226.213:8000/users/test_sign_producer/', {
+    return fetch(this.url + 'users/test_sign_producer/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -131,7 +133,7 @@ const api = {
   },
 
   getProducerOffers() {
-    return fetch('http://188.120.226.213:8000/users/get_producer_offers/', {
+    return fetch(this.url + 'users/get_producer_offers/', {
       method: 'POST',
       body: JSON.stringify({
         access_token: localStorage.getItem('access_token'),
@@ -141,7 +143,7 @@ const api = {
   },
 
   logout() {
-    fetch('http://188.120.226.213:8000/users/logout/', {
+    fetch(this.url + 'users/logout/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

@@ -8,7 +8,7 @@
         <p>Ваши данные нужны для заполнения следующих документов:</p>
         <ul>
           <li v-for="doc in docs" :key="doc.doc_id">
-            <a :href="'http://188.120.226.213:8000/static' + doc.path" data-bs-toggle="modal" :data-bs-target="`#empty${doc.doc_id}`">{{ doc.doc_name }}</a>
+            <a :href="apiUrl + 'static' + doc.path" data-bs-toggle="modal" :data-bs-target="`#empty${doc.doc_id}`">{{ doc.doc_name }}</a>
             <div class="modal fade" :id="`empty${doc.doc_id}`" tabindex="-1" aria-hidden="true">
               <div class="modal-dialog modal-xl">
                 <div class="modal-content">
@@ -17,8 +17,8 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                  <object :data="'http://188.120.226.213:8000/static' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720">
-                    <a :href="'http://188.120.226.213:8000/static' + doc.path" target=_blank>{{ doc.doc_name }}</a>
+                  <object :data="apiUrl + 'static' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720">
+                    <a :href="apiUrl + 'static' + doc.path" target=_blank>{{ doc.doc_name }}</a>
                   </object>
                 </div>
                 <div class="modal-footer">
@@ -53,7 +53,7 @@
         <p>Вы можете проверить вид документов:</p>
         <ul>
           <li v-for="doc in filledDocs" :key="doc.doc_id">
-            <a :href="'http://188.120.226.213:8000/static/' + doc.path" data-bs-toggle="modal" :data-bs-target="`#filled${doc.doc_id}`">{{ doc.doc_name }}</a>
+            <a :href="apiUrl + 'static/' + doc.path" data-bs-toggle="modal" :data-bs-target="`#filled${doc.doc_id}`">{{ doc.doc_name }}</a>
             <div class="modal fade" :id="`filled${doc.doc_id}`" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-xl">
               <div class="modal-content">
@@ -62,8 +62,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <object :data="'http://188.120.226.213:8000/static/' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720">
-                  <a :href="'http://188.120.226.213:8000/static/' + doc.path" target=_blank>{{ doc.doc_name }}</a>
+                <object :data="apiUrl + 'static/' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720">
+                  <a :href="apiUrl + 'static/' + doc.path" target=_blank>{{ doc.doc_name }}</a>
                 </object>
               </div>
               <div class="modal-footer">
@@ -113,6 +113,7 @@ export default {
       noSignError: false,
       isSignSending: false,
       error: false,
+      apiUrl: api.url,
       formData: {}
     }
   },
