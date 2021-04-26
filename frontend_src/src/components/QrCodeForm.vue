@@ -7,7 +7,7 @@
           <div v-for="tag in tags" :key="tag" class="form-group">
             <label class="w-100">
               {{ tag }}
-              <input type="text" class="form-control" :name="tag" >
+              <input :type="tag === 'email' ? 'email' : 'text'" class="form-control" :name="tag" >
             </label>
           </div>
           <button v-if="isTagsSending" class="btn btn-primary btn-block" disabled>Создаем QR код...</button>
