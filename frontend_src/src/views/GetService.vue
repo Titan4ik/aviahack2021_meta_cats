@@ -17,7 +17,9 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                  <object :data="'http://188.120.226.213:8000/static' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720"></object>
+                  <object :data="'http://188.120.226.213:8000/static' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720">
+                    <a :href="'http://188.120.226.213:8000/static' + doc.path" target=_blank>{{ doc.doc_name }}</a>
+                  </object>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
@@ -60,7 +62,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <object :data="'http://188.120.226.213:8000/static/' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720"></object>
+                <object :data="'http://188.120.226.213:8000/static/' + doc.path" type="application/pdf" title="SamplePdf" width="100%" height="720">
+                  <a :href="'http://188.120.226.213:8000/static' + doc.path" target=_blank>{{ doc.doc_name }}</a>
+                </object>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
@@ -78,6 +82,7 @@
       <div><button type="button" id="clear" class="clear-button" @click="clearSign">Очистить</button></div>
       <button v-if="isSignSending" class="btn btn-primary btn-block" disabled>Подписываем документы...</button>
       <button v-else class="btn btn-primary btn-block" @click="sendSign">Подписать</button>
+      <div v-if="noSignError" class="alert alert-danger">Сделайте подпись</div>
     </div>
     <div v-else>
       <p>Документы успешно подписаны!</p>
@@ -105,6 +110,7 @@ export default {
       isTagsSubmited: false,
       isTagsSending: false,
       isSignSubmited: false,
+      noSignError: false,
       isSignSending: false,
       error: false,
       formData: {}
@@ -192,8 +198,14 @@ export default {
     },
     
     sendSign() {
+      if (this.signaturePad.isEmpty()) {
+        this.noSignError = true
+        return
+      }
+      this.noSignError = false
       this.isSignSubmited = false
       this.isSignSending = true
+
       const formData = this.formData
       formData.set('el_sign', this.signaturePad.toDataURL())
 
